@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Entity;
 
 use DateTimeInterface;
+use Doctrine\ORM\Mapping as ORM;
 use Webmozart\Assert\Assert;
 
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="setono_job_status__job")
+ */
 class Job
 {
     public const STATUS_PENDING = 'pending';
@@ -17,26 +22,49 @@ class Job
 
     public const STATUS_FINISHED = 'finished';
 
+    /**
+     * @ORM\Id()
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue()
+     */
     protected ?int $id = null;
 
+    /**
+     * Mapping this field as a version field will ensure that step updates won't overwrite each other
+     *
+     * @ORM\Column(type="integer")
+     * @ORM\Version()
+     */
+    protected int $version = 1;
+
+    /** @ORM\Column(type="string") */
     protected string $type = 'generic';
 
+    /** @ORM\Column(type="string") */
     protected string $status = self::STATUS_PENDING;
 
+    /** @ORM\Column(type="datetime", nullable=true) */
     protected ?DateTimeInterface $startedAt = null;
 
+    /** @ORM\Column(type="datetime", nullable=true) */
     protected ?DateTimeInterface $failedAt = null;
 
+    /** @ORM\Column(type="datetime", nullable=true) */
     protected ?DateTimeInterface $finishedAt = null;
 
+    /** @ORM\Column(type="datetime") */
     protected ?DateTimeInterface $updatedAt = null;
 
+    /** @ORM\Column(type="integer") */
     protected int $step = 0;
 
+    /** @ORM\Column(type="integer", nullable=true) */
     protected ?int $steps = null;
 
+    /** @ORM\Column(type="array") */
     protected array $metadata = [];
 
+    /** @ORM\Column(type="text", nullable=true) */
     protected ?string $error = null;
 
     /**
@@ -170,6 +198,11 @@ class Job
     public function setError(?string $error): void
     {
         $this->error = $error;
+    }
+
+    public function advance(int $steps = 1): void
+    {
+        $this->step += $steps;
     }
 
     /**
