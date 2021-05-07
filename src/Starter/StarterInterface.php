@@ -13,6 +13,8 @@ interface StarterInterface
      * created job OR the job you have as input
      *
      * NOTICE that it will only set the steps variable if the given argument is NOT null
+     *
+     * @param bool $flush Flushes the object manager if set to true
      */
-    public function start(Job $job = null, int $steps = null): Job;
+    public function start(Job $job = null, int $steps = null, bool $flush = false): Job;
 }
