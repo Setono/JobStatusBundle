@@ -4,82 +4,71 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Entity;
 
+use DateTime;
 use DateTimeInterface;
-use Doctrine\ORM\Mapping as ORM;
 use Webmozart\Assert\Assert;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="setono_job_status__job")
- */
 class Job
 {
-    public const STATUS_PENDING = 'pending';
+    public const STATE_PENDING = 'pending';
 
-    public const STATUS_RUNNING = 'running';
+    public const STATE_RUNNING = 'running';
 
-    public const STATUS_FAILED = 'failed';
+    public const STATE_FAILED = 'failed';
 
-    public const STATUS_FINISHED = 'finished';
+    public const STATE_FINISHED = 'finished';
 
-    /**
-     * @ORM\Id()
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue()
-     */
     protected ?int $id = null;
 
-    /**
-     * Mapping this field as a version field will ensure that step updates won't overwrite each other
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Version()
-     */
     protected int $version = 1;
 
-    /** @ORM\Column(type="string") */
     protected string $type = 'generic';
 
-    /** @ORM\Column(type="string") */
-    protected string $status = self::STATUS_PENDING;
+    protected string $name = 'Generic job';
 
-    /** @ORM\Column(type="datetime", nullable=true) */
+    protected string $state = self::STATE_PENDING;
+
+    protected DateTimeInterface $createdAt;
+
+    protected DateTimeInterface $updatedAt;
+
     protected ?DateTimeInterface $startedAt = null;
 
-    /** @ORM\Column(type="datetime", nullable=true) */
     protected ?DateTimeInterface $failedAt = null;
 
-    /** @ORM\Column(type="datetime", nullable=true) */
     protected ?DateTimeInterface $finishedAt = null;
 
-    /** @ORM\Column(type="datetime") */
-    protected ?DateTimeInterface $updatedAt = null;
-
-    /** @ORM\Column(type="integer") */
     protected int $step = 0;
 
-    /** @ORM\Column(type="integer", nullable=true) */
     protected ?int $steps = null;
 
-    /** @ORM\Column(type="array") */
     protected array $metadata = [];
 
-    /** @ORM\Column(type="text", nullable=true) */
     protected ?string $error = null;
+
+    public function __construct()
+    {
+        $this->createdAt = $this->updatedAt = new DateTime();
+    }
 
     /**
      * @return array<array-key, string>
      */
-    public static function getStatuses(): array
+    public static function getStates(): array
     {
         return [
-            self::STATUS_PENDING, self::STATUS_RUNNING, self::STATUS_FAILED, self::STATUS_FINISHED,
+            self::STATE_PENDING, self::STATE_RUNNING, self::STATE_FAILED, self::STATE_FINISHED,
         ];
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 
     public function getType(): string
@@ -95,16 +84,71 @@ class Job
         $this->type = $type;
     }
 
-    public function getStatus(): string
+    public function getName(): string
     {
-        return $this->status;
+        return $this->name;
     }
 
-    public function setStatus(string $status): void
+    /**
+     * A name for the job to easily identify the job for the end user, examples could be:
+     *
+     * - Process Google shopping feed (id: 123)
+     * - Update product prices on all products
+     * - Crawl example.com for 404 errors
+     */
+    public function setName(string $name): void
     {
-        Assert::oneOf($status, self::getStatuses());
+        $this->name = $name;
+    }
 
-        $this->status = $status;
+    public function getState(): string
+    {
+        return $this->state;
+    }
+
+    public function setState(string $state): void
+    {
+        Assert::oneOf($state, self::getStates());
+
+        $this->state = $state;
+    }
+
+    public function isRunning(): bool
+    {
+        return $this->state === self::STATE_RUNNING;
+    }
+
+    public function isFailed(): bool
+    {
+        return $this->state === self::STATE_FAILED;
+    }
+
+    public function isFinished(): bool
+    {
+        return $this->state === self::STATE_FINISHED;
+    }
+
+    public function getCreatedAt(): DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeInterface $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * The last time this job was updated in any way
+     */
+    public function getUpdatedAt(): DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(DateTimeInterface $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
     }
 
     public function getStartedAt(): ?DateTimeInterface
@@ -138,19 +182,6 @@ class Job
     }
 
     /**
-     * The last time this job was updated in any way
-     */
-    public function getUpdatedAt(): ?DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(DateTimeInterface $updatedAt): void
-    {
-        $this->updatedAt = $updatedAt;
-    }
-
-    /**
      * The current step, i.e. 45 out of 125, 45 is the step
      */
     public function getStep(): int
@@ -161,6 +192,9 @@ class Job
     public function setStep(int $step): void
     {
         Assert::greaterThanEq($step, 0);
+        if (null !== $this->steps) {
+            Assert::lessThanEq($step, $this->steps);
+        }
 
         $this->step = $step;
     }
@@ -180,29 +214,15 @@ class Job
         $this->steps = $steps;
     }
 
-    public function getMetadata(): array
-    {
-        return $this->metadata;
-    }
-
-    public function setMetadata(array $metadata): void
-    {
-        $this->metadata = $metadata;
-    }
-
-    public function getError(): ?string
-    {
-        return $this->error;
-    }
-
-    public function setError(?string $error): void
-    {
-        $this->error = $error;
-    }
-
     public function advance(int $steps = 1): void
     {
-        $this->step += $steps;
+        $step = max(0, $this->step + $steps);
+
+        if (null !== $this->steps) {
+            $step = min($step, $this->steps);
+        }
+
+        $this->step = $step;
     }
 
     /**
@@ -220,5 +240,40 @@ class Job
         }
 
         return round(($this->getStep() / $steps) * 100, $decimals, \PHP_ROUND_HALF_DOWN);
+    }
+
+    public function getMetadata(): array
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata(array $metadata): void
+    {
+        $this->metadata = $metadata;
+    }
+
+    public function hasMetadataEntry(string $key): bool
+    {
+        return array_key_exists($key, $this->metadata);
+    }
+
+    /**
+     * Notice that this method will overwrite any data saved on $key
+     *
+     * @param mixed $value
+     */
+    public function setMetadataEntry(string $key, $value): void
+    {
+        $this->metadata[$key] = $value;
+    }
+
+    public function getError(): ?string
+    {
+        return $this->error;
+    }
+
+    public function setError(?string $error): void
+    {
+        $this->error = $error;
     }
 }

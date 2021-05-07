@@ -20,12 +20,17 @@ final class EnsureJobIsStartedEventSubscriber implements EventSubscriberInterfac
     public static function getSubscribedEvents(): array
     {
         return [
-            StepCompletedEvent::class => 'ensure', // todo add priority that is HIGHER than UpdateJobProgressEventSubscriber
+            StepCompletedEvent::class => ['ensure', 10],
         ];
     }
 
     public function ensure(StepCompletedEvent $event): void
     {
+        $job = $event->getJob();
+        if ($job->isRunning()) {
+            return;
+        }
+
         $this->starter->start($event->getJob());
     }
 }

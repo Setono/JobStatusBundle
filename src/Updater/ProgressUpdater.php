@@ -30,6 +30,8 @@ final class ProgressUpdater implements ProgressUpdaterInterface
         $tries = 0;
 
         do {
+            // this could look like a bug, but the $job is refreshed (in the object manager)
+            // in the case self::flush returns false
             $job->advance($steps);
         } while (!$this->flush($job, ++$tries));
     }

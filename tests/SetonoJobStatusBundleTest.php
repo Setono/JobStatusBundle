@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Tests;
 
+use EventSauce\BackOff\FibonacciBackOffStrategy;
 use Nyholm\BundleTest\BaseBundleTestCase;
 use Nyholm\BundleTest\CompilerPass\PublicServicePass;
 use Setono\JobStatusBundle\SetonoJobStatusBundle;
@@ -25,22 +26,16 @@ final class SetonoJobStatusBundleTest extends BaseBundleTestCase
     /**
      * @test
      */
-//    public function it_has_services(): void
-//    {
+    public function it_has_services(): void
+    {
 //        $this->bootKernel();
 //        $container = $this->getContainer();
 //
+//        /** @var array<string, array<string, class-string> $services */
 //        $services = [
-//            // cookie.xml
-//            'setono_client_id.cookie.adapter.symfony_cookie_reader' => [
-//                'class' => SymfonyCookieReader::class,
-//                'interface' => CookieReaderInterface::class,
-//            ],
-//
-//            // generator.xml
-//            ClientIdGeneratorInterface::class => [
-//                'class' => UuidClientIdGenerator::class,
-//                'interface' => ClientIdGeneratorInterface::class,
+//            // back_off.xml
+//            'setono_job_status.back_off.fibonacci' => [
+//                'class' => FibonacciBackOffStrategy::class,
 //            ],
 //        ];
 //
@@ -66,5 +61,5 @@ final class SetonoJobStatusBundleTest extends BaseBundleTestCase
 //                );
 //            }
 //        }
-//    }
+    }
 }
