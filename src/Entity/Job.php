@@ -8,16 +8,8 @@ use DateTime;
 use DateTimeInterface;
 use Webmozart\Assert\Assert;
 
-class Job
+class Job implements JobInterface
 {
-    public const STATE_PENDING = 'pending';
-
-    public const STATE_RUNNING = 'running';
-
-    public const STATE_FAILED = 'failed';
-
-    public const STATE_FINISHED = 'finished';
-
     protected ?int $id = null;
 
     protected int $version = 1;
