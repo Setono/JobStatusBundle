@@ -8,7 +8,6 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
 use EventSauce\BackOff\BackOffStrategy;
 use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
-use Setono\JobStatusBundle\Entity\Job;
 use Setono\JobStatusBundle\Entity\JobInterface;
 
 final class ProgressUpdater implements ProgressUpdaterInterface
