@@ -68,9 +68,6 @@ class Job implements JobInterface
         return $this->type;
     }
 
-    /**
-     * Use the type to distinguish between jobs
-     */
     public function setType(string $type): void
     {
         $this->type = $type;
@@ -81,13 +78,6 @@ class Job implements JobInterface
         return $this->name;
     }
 
-    /**
-     * A name for the job to easily identify the job for the end user, examples could be:
-     *
-     * - Process Google shopping feed (id: 123)
-     * - Update product prices on all products
-     * - Crawl example.com for 404 errors
-     */
     public function setName(string $name): void
     {
         $this->name = $name;
@@ -130,9 +120,6 @@ class Job implements JobInterface
         $this->createdAt = $createdAt;
     }
 
-    /**
-     * The last time this job was updated in any way
-     */
     public function getUpdatedAt(): DateTimeInterface
     {
         return $this->updatedAt;
@@ -173,9 +160,6 @@ class Job implements JobInterface
         $this->finishedAt = $finishedAt;
     }
 
-    /**
-     * The current step, i.e. 45 out of 125, 45 is the step
-     */
     public function getStep(): int
     {
         return $this->step;
@@ -191,9 +175,6 @@ class Job implements JobInterface
         $this->step = $step;
     }
 
-    /**
-     * The total number of steps. If null, we don't know the total number of steps
-     */
     public function getSteps(): ?int
     {
         return $this->steps;
@@ -217,13 +198,6 @@ class Job implements JobInterface
         $this->step = $step;
     }
 
-    /**
-     * Returns the progress in percent
-     *
-     * 376 of 1000 will return 37 with $decimals = 0
-     *
-     * If we can't compute a progress (because the steps are not set) it will return null
-     */
     public function getProgress(int $decimals = 0): ?float
     {
         $steps = $this->getSteps();
@@ -249,11 +223,6 @@ class Job implements JobInterface
         return array_key_exists($key, $this->metadata);
     }
 
-    /**
-     * Notice that this method will overwrite any data saved on $key
-     *
-     * @param mixed $value
-     */
     public function setMetadataEntry(string $key, $value): void
     {
         $this->metadata[$key] = $value;
