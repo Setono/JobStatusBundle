@@ -34,15 +34,18 @@ final class JobsCommand extends Command
             $startedAt = $job->getStartedAt();
             Assert::notNull($startedAt);
 
+            $steps = $job->getSteps();
+
             $rows[] = [
-                $job->getType(),
                 $job->getName(),
+                $job->getType(),
+                $steps === null ? $job->getStep() : sprintf('%d / %d (%d%%)', $job->getStep(), $steps, (int) $job->getProgress()),
                 $startedAt->format(\DATE_ATOM),
                 $job->getUpdatedAt()->format(\DATE_ATOM),
             ];
         }
 
-        $io->table(['Type', 'Name', 'Started at', 'Last update'], $rows);
+        $io->table(['Name', 'Type', 'Progress', 'Started at', 'Last update'], $rows);
 
         return 0;
     }
