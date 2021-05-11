@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Tests;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use EventSauce\BackOff\FibonacciBackOffStrategy;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -37,8 +37,9 @@ final class FunctionalTest extends TestCase
 
         $eventDispatcher = new EventDispatcher();
 
-        $objectManager = $this->prophesize(ObjectManager::class);
-        $objectManager->flush()->shouldBeCalledTimes(2);
+        $objectManager = $this->prophesize(EntityManagerInterface::class);
+        $objectManager->persist($job)->shouldBeCalledTimes(1);
+        $objectManager->flush()->shouldBeCalledTimes(3);
 
         $managerRegistry = $this->prophesize(ManagerRegistry::class);
         $managerRegistry->getManagerForClass(Job::class)->willReturn($objectManager);
@@ -47,7 +48,7 @@ final class FunctionalTest extends TestCase
 
         $finisher = new Finisher($workflowRegistry);
 
-        $starter = new Starter($workflowRegistry);
+        $starter = new Starter($workflowRegistry, $managerRegistry->reveal());
 
         $progressUpdater = new ProgressUpdater($managerRegistry->reveal(), new FibonacciBackOffStrategy(250_000, 5));
 

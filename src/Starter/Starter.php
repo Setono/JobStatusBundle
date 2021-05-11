@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Starter;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
 use Setono\JobStatusBundle\Entity\Job;
-use Setono\JobStatusBundle\Persistence\ManagerTrait;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
 use Symfony\Component\Workflow\Registry;
 
 final class Starter implements StarterInterface
 {
-    use ManagerTrait;
+    use ORMManagerTrait;
 
     private Registry $workflowRegistry;
 
@@ -44,7 +44,7 @@ final class Starter implements StarterInterface
 
         $workflow->apply($job, JobWorkflow::TRANSITION_START);
 
-        if($flush) {
+        if ($flush) {
             $manager = $this->getManager($job);
             $manager->persist($job);
             $manager->flush();
