@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\EventListener\Workflow;
 
-use Setono\JobStatusBundle\Entity\Job;
+use Setono\JobStatusBundle\Entity\JobInterface;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -27,9 +27,9 @@ final class StartJobEventSubscriber implements EventSubscriberInterface
 
     public function start(Event $event): void
     {
-        /** @var Job|mixed $job */
+        /** @var JobInterface|mixed $job */
         $job = $event->getSubject();
-        Assert::isInstanceOf($job, Job::class);
+        Assert::isInstanceOf($job, JobInterface::class);
 
         $job->setStep(0);
         $job->setStartedAt(new \DateTime());
