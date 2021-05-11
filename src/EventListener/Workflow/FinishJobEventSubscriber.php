@@ -32,5 +32,10 @@ final class FinishJobEventSubscriber implements EventSubscriberInterface
         Assert::isInstanceOf($job, Job::class);
 
         $job->setFinishedAt(new \DateTime());
+
+        $steps = $job->getSteps();
+        if (null !== $steps) {
+            $job->setStep($steps);
+        }
     }
 }
