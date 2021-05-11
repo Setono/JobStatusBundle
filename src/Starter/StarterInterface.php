@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Starter;
 
 use Setono\JobStatusBundle\Entity\Job;
+use Setono\JobStatusBundle\Entity\JobInterface;
 
 interface StarterInterface
 {
@@ -16,5 +17,5 @@ interface StarterInterface
      *
      * @param bool $flush Flushes the object manager if set to true
      */
-    public function start(Job $job = null, int $steps = null, bool $flush = false): Job;
+    public function start(JobInterface $job = null, int $steps = null, bool $flush = false): JobInterface;
 }

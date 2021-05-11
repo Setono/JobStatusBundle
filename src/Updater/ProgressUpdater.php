@@ -6,16 +6,14 @@ namespace Setono\JobStatusBundle\Updater;
 
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use EventSauce\BackOff\BackOffStrategy;
+use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
 use Setono\JobStatusBundle\Entity\Job;
-use Webmozart\Assert\Assert;
+use Setono\JobStatusBundle\Entity\JobInterface;
 
 final class ProgressUpdater implements ProgressUpdaterInterface
 {
-    private ?ObjectManager $manager = null;
-
-    private ManagerRegistry $managerRegistry;
+    use ORMManagerTrait;
 
     private BackOffStrategy $backOffStrategy;
 
@@ -25,7 +23,7 @@ final class ProgressUpdater implements ProgressUpdaterInterface
         $this->backOffStrategy = $backOffStrategy;
     }
 
-    public function update(Job $job, int $steps = 1): void
+    public function update(JobInterface $job, int $steps = 1): void
     {
         $tries = 0;
 
@@ -42,7 +40,7 @@ final class ProgressUpdater implements ProgressUpdaterInterface
      *
      * @throws OptimisticLockException
      */
-    private function flush(Job $job, int $tries): bool
+    private function flush(JobInterface $job, int $tries): bool
     {
         $manager = $this->getManager($job);
 
@@ -57,17 +55,5 @@ final class ProgressUpdater implements ProgressUpdaterInterface
         }
 
         return true;
-    }
-
-    private function getManager(object $obj): ObjectManager
-    {
-        if (null === $this->manager) {
-            $manager = $this->managerRegistry->getManagerForClass(get_class($obj));
-            Assert::notNull($manager);
-
-            $this->manager = $manager;
-        }
-
-        return $this->manager;
     }
 }

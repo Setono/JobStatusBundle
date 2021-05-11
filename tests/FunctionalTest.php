@@ -15,6 +15,7 @@ use Setono\JobStatusBundle\EventListener\CheckJobFinishedEventSubscriber;
 use Setono\JobStatusBundle\EventListener\UpdateJobProgressEventSubscriber;
 use Setono\JobStatusBundle\EventListener\Workflow\FinishJobEventSubscriber;
 use Setono\JobStatusBundle\EventListener\Workflow\StartJobEventSubscriber;
+use Setono\JobStatusBundle\Factory\JobFactory;
 use Setono\JobStatusBundle\Finisher\Finisher;
 use Setono\JobStatusBundle\Starter\Starter;
 use Setono\JobStatusBundle\Updater\ProgressUpdater;
@@ -48,7 +49,7 @@ final class FunctionalTest extends TestCase
 
         $finisher = new Finisher($workflowRegistry);
 
-        $starter = new Starter($workflowRegistry, $managerRegistry->reveal());
+        $starter = new Starter($workflowRegistry, $managerRegistry->reveal(), new JobFactory());
 
         $progressUpdater = new ProgressUpdater($managerRegistry->reveal(), new FibonacciBackOffStrategy(250_000, 5));
 

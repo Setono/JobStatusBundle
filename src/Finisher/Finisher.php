@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Finisher;
 
-use Setono\JobStatusBundle\Entity\Job;
+use Setono\JobStatusBundle\Entity\JobInterface;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
 use Symfony\Component\Workflow\Registry;
 
@@ -17,7 +17,7 @@ final class Finisher implements FinisherInterface
         $this->workflowRegistry = $workflowRegistry;
     }
 
-    public function finish(Job $job): void
+    public function finish(JobInterface $job): void
     {
         if (!$this->workflowRegistry->has($job, JobWorkflow::NAME)) {
             return;

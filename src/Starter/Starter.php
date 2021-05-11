@@ -6,7 +6,8 @@ namespace Setono\JobStatusBundle\Starter;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
-use Setono\JobStatusBundle\Entity\Job;
+use Setono\JobStatusBundle\Entity\JobInterface;
+use Setono\JobStatusBundle\Factory\JobFactoryInterface;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
 use Symfony\Component\Workflow\Registry;
 
@@ -16,16 +17,22 @@ final class Starter implements StarterInterface
 
     private Registry $workflowRegistry;
 
-    public function __construct(Registry $workflowRegistry, ManagerRegistry $managerRegistry)
-    {
+    private JobFactoryInterface $jobFactory;
+
+    public function __construct(
+        Registry $workflowRegistry,
+        ManagerRegistry $managerRegistry,
+        JobFactoryInterface $jobFactory
+    ) {
         $this->workflowRegistry = $workflowRegistry;
         $this->managerRegistry = $managerRegistry;
+        $this->jobFactory = $jobFactory;
     }
 
-    public function start(Job $job = null, int $steps = null, bool $flush = true): Job
+    public function start(JobInterface $job = null, int $steps = null, bool $flush = true): JobInterface
     {
         if (null === $job) {
-            $job = new Job();
+            $job = $this->jobFactory->createNew();
         }
 
         if (null !== $steps) {
