@@ -198,14 +198,14 @@ class Job implements JobInterface
         $this->step = $step;
     }
 
-    public function getProgress(int $decimals = 0): ?float
+    public function getProgress(): ?int
     {
         $steps = $this->getSteps();
         if (null === $steps) {
             return null;
         }
 
-        return round(($this->getStep() / $steps) * 100, $decimals, \PHP_ROUND_HALF_DOWN);
+        return (int) floor($this->getStep() / $steps * 100);
     }
 
     public function getMetadata(): array

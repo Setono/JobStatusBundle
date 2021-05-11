@@ -90,11 +90,11 @@ interface JobInterface
     /**
      * Returns the progress in percent
      *
-     * 376 of 1000 will return 37 with $decimals = 0
+     * 376 of 1000 will return 37
      *
      * If we can't compute a progress (because the steps are not set) it will return null
      */
-    public function getProgress(int $decimals = 0): ?float;
+    public function getProgress(): ?int;
 
     public function getMetadata(): array;
 
