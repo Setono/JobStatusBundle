@@ -27,6 +27,6 @@
         <field name="step" type="integer"/>
         <field name="steps" type="integer" nullable="true"/>
         <field name="metadata" type="array"/>
-        <field name="error" type="text"/>
+        <field name="error" type="text" nullable="true"/>
     </mapped-superclass>
 </doctrine-mapping>
