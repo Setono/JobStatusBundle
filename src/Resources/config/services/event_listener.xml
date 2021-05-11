@@ -10,8 +10,8 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_job_status.event_listener.finish_job_event_subscriber"
-                 class="CheckJobFinishedEventSubscriber">
+        <service id="setono_job_status.event_listener.check_job_finished_event_subscriber"
+                 class="Setono\JobStatusBundle\EventListener\CheckJobFinishedEventSubscriber">
             <argument type="service" id="setono_job_status.finisher"/>
 
             <tag name="kernel.event_subscriber"/>
