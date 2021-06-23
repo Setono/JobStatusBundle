@@ -12,5 +12,5 @@ interface FinisherInterface
     /**
      * Finishes the given job
      */
-    public function finish(JobInterface $job): void;
+    public function finish(JobInterface $job, bool $flush = true): void;
 }

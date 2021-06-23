@@ -5,6 +5,7 @@
     <services>
         <service id="setono_job_status.finisher" class="Setono\JobStatusBundle\Finisher\Finisher">
             <argument type="service" id="workflow.registry"/>
+            <argument type="service" id="doctrine"/>
         </service>
     </services>
 </container>

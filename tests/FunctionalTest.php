@@ -41,7 +41,7 @@ final class FunctionalTest extends TestCase
 
         $objectManager = $this->prophesize(EntityManagerInterface::class);
         $objectManager->persist($job)->shouldBeCalledTimes(1);
-        $objectManager->flush()->shouldBeCalledTimes(3);
+        $objectManager->flush()->shouldBeCalledTimes(4);
 
         $managerRegistry = $this->prophesize(ManagerRegistry::class);
         $managerRegistry->getManagerForClass(Job::class)->willReturn($objectManager);
@@ -51,7 +51,7 @@ final class FunctionalTest extends TestCase
         $jobRepository = $this->prophesize(JobRepositoryInterface::class);
         $jobRepository->hasExclusiveRunningJob('generic')->willReturn(false);
 
-        $finisher = new Finisher($workflowRegistry);
+        $finisher = new Finisher($workflowRegistry, $managerRegistry->reveal());
 
         $starter = new Starter($workflowRegistry, $managerRegistry->reveal(), $jobRepository->reveal(), new JobFactory());
 
