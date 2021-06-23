@@ -17,4 +17,19 @@ class JobRepository extends ServiceEntityRepository implements JobRepositoryInte
 
         return $jobs;
     }
+
+    public function hasExclusiveRunningJob(string $type): bool
+    {
+        $res = (int) $this->createQueryBuilder('o')
+            ->select('COUNT(o)')
+            ->andWhere('o.exclusive = true')
+            ->andWhere('o.state = :state')
+            ->andWhere('o.type = :type')
+            ->setParameter('state', JobInterface::STATE_RUNNING)
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $res > 0;
+    }
 }
