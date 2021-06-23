@@ -7,7 +7,7 @@
 [![Code Coverage][ico-code-coverage]][link-code-coverage]
 [![Mutation testing][ico-infection]][link-infection]
 
-Integrates the [client id library](https://github.com/Setono/client-id) into Symfony.
+This bundle makes it easy to manage async jobs be it console commands, Messenger commands or anything else.
 
 [ico-version]: https://poser.pugx.org/setono/job-status-bundle/v/stable
 [ico-unstable-version]: https://poser.pugx.org/setono/job-status-bundle/v/unstable
