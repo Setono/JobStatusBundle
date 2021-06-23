@@ -48,10 +48,6 @@ final class Starter implements StarterInterface
             $job->setSteps($steps);
         }
 
-        if (!$this->workflowRegistry->has($job, JobWorkflow::NAME)) {
-            return $job;
-        }
-
         $workflow = $this->workflowRegistry->get($job, JobWorkflow::NAME);
 
         if (!$workflow->can($job, JobWorkflow::TRANSITION_START)) {
