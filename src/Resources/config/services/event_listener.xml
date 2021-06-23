@@ -10,5 +10,12 @@
             <tag name="doctrine.event_listener" event="prePersist"/>
             <tag name="doctrine.event_listener" event="preUpdate"/>
         </service>
+
+        <service id="setono_job_status.event_listener.doctrine.convert_mapped_superclass"
+                 class="Setono\JobStatusBundle\EventListener\Doctrine\ConvertMappedSuperclassEventListener">
+            <argument type="service" id="validator"/>
+
+            <tag name="doctrine.event_listener" event="loadClassMetadata"/>
+        </service>
     </services>
 </container>
