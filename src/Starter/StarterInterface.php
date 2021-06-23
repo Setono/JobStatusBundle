@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Starter;
 
-use Setono\JobStatusBundle\Entity\Job;
 use Setono\JobStatusBundle\Entity\JobInterface;
+use Setono\JobStatusBundle\Exception\CannotStartJobException;
 
 interface StarterInterface
 {
@@ -16,6 +16,8 @@ interface StarterInterface
      * NOTICE that it will only set the steps variable if the given argument is NOT null
      *
      * @param bool $flush Flushes the object manager if set to true
+     *
+     * @throws CannotStartJobException
      */
     public function start(JobInterface $job = null, int $steps = null, bool $flush = false): JobInterface;
 }

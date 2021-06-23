@@ -7,6 +7,7 @@ namespace Setono\JobStatusBundle\Starter;
 use Doctrine\Persistence\ManagerRegistry;
 use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
 use Setono\JobStatusBundle\Entity\JobInterface;
+use Setono\JobStatusBundle\Exception\CannotStartJobException;
 use Setono\JobStatusBundle\Factory\JobFactoryInterface;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
@@ -41,7 +42,7 @@ final class Starter implements StarterInterface
         }
 
         if ($this->jobRepository->hasExclusiveRunningJob($job->getType())) {
-            throw new \RuntimeException(sprintf('An exclusive job with the type "%s" is already running', $job->getType()));
+            throw CannotStartJobException::exclusiveJobRunning($job->getType());
         }
 
         if (null !== $steps) {
@@ -51,8 +52,7 @@ final class Starter implements StarterInterface
         $workflow = $this->workflowRegistry->get($job, JobWorkflow::NAME);
 
         if (!$workflow->can($job, JobWorkflow::TRANSITION_START)) {
-            // todo should this throw an exception?
-            return $job;
+            throw CannotStartJobException::transitionBlocked(JobWorkflow::TRANSITION_START);
         }
 
         $workflow->apply($job, JobWorkflow::TRANSITION_START);
