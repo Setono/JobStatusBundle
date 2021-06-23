@@ -6,16 +6,20 @@ namespace Setono\JobStatusBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Setono\JobStatusBundle\Entity\JobInterface;
-use Webmozart\Assert\Assert;
 
+/**
+ * @extends ServiceEntityRepository<JobInterface>
+ */
 class JobRepository extends ServiceEntityRepository implements JobRepositoryInterface
 {
-    public function findRunningJobs(int $limit = 1000, int $offset = null): array
+    public function findRunningJobs(array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array
     {
-        $jobs = $this->findBy(['state' => JobInterface::STATE_RUNNING], ['updatedAt' => 'DESC'], $limit, $offset);
-        Assert::allIsInstanceOf($jobs, JobInterface::class);
+        return $this->findBy(['state' => JobInterface::STATE_RUNNING], $orderBy, $limit, $offset);
+    }
 
-        return $jobs;
+    public function findByType(string $type, array $orderBy = null, int $limit = 1000, int $offset = null): array
+    {
+        return $this->findBy(['type' => $type], $orderBy, $limit, $offset);
     }
 
     public function hasExclusiveRunningJob(string $type): bool
