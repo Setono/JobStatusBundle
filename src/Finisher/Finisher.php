@@ -19,10 +19,6 @@ final class Finisher implements FinisherInterface
 
     public function finish(JobInterface $job): void
     {
-        if (!$this->workflowRegistry->has($job, JobWorkflow::NAME)) {
-            return;
-        }
-
         $workflow = $this->workflowRegistry->get($job, JobWorkflow::NAME);
 
         if (!$workflow->can($job, JobWorkflow::TRANSITION_FINISH)) {
