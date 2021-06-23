@@ -45,7 +45,10 @@
     "extra": {
         "branch-alias": {
             "dev-master": "1.0-dev"
-        }
+        },
+        "unused": [
+            "stof/doctrine-extensions-bundle"
+        ]
     },
     "autoload": {
         "psr-4": {
