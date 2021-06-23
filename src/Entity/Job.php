@@ -18,6 +18,8 @@ class Job implements JobInterface
 
     protected string $name = 'Generic job';
 
+    protected bool $exclusive = false;
+
     protected string $state = self::STATE_PENDING;
 
     protected DateTimeInterface $createdAt;
@@ -81,6 +83,16 @@ class Job implements JobInterface
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function isExclusive(): bool
+    {
+        return $this->exclusive;
+    }
+
+    public function setExclusive(bool $exclusive): void
+    {
+        $this->exclusive = $exclusive;
     }
 
     public function getState(): string

@@ -38,6 +38,13 @@ interface JobInterface
      */
     public function setName(string $name): void;
 
+    /**
+     * Returns true if this job is only allowed to run one at a time
+     */
+    public function isExclusive(): bool;
+
+    public function setExclusive(bool $exclusive): void;
+
     public function getState(): string;
 
     public function setState(string $state): void;
