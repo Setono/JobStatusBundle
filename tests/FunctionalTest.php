@@ -17,6 +17,7 @@ use Setono\JobStatusBundle\EventSubscriber\Workflow\FinishJobEventSubscriber;
 use Setono\JobStatusBundle\EventSubscriber\Workflow\StartJobEventSubscriber;
 use Setono\JobStatusBundle\Factory\JobFactory;
 use Setono\JobStatusBundle\Finisher\Finisher;
+use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
 use Setono\JobStatusBundle\Starter\Starter;
 use Setono\JobStatusBundle\Updater\ProgressUpdater;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
@@ -47,9 +48,12 @@ final class FunctionalTest extends TestCase
 
         $workflowRegistry = self::getWorkflowRegistry($eventDispatcher);
 
+        $jobRepository = $this->prophesize(JobRepositoryInterface::class);
+        $jobRepository->hasExclusiveRunningJob('generic')->willReturn(false);
+
         $finisher = new Finisher($workflowRegistry);
 
-        $starter = new Starter($workflowRegistry, $managerRegistry->reveal(), new JobFactory());
+        $starter = new Starter($workflowRegistry, $managerRegistry->reveal(), $jobRepository->reveal(), new JobFactory());
 
         $progressUpdater = new ProgressUpdater($managerRegistry->reveal(), new FibonacciBackOffStrategy(250_000, 5));
 
