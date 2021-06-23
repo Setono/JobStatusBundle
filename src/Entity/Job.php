@@ -247,6 +247,15 @@ class Job implements JobInterface
         return array_key_exists($key, $this->metadata);
     }
 
+    public function getMetadataEntry(string $key)
+    {
+        if (!$this->hasMetadataEntry($key)) {
+            throw new \OutOfBoundsException(sprintf('The key "%s" does not exist in the metadata', $key));
+        }
+
+        return $this->metadata[$key];
+    }
+
     public function setMetadataEntry(string $key, $value): void
     {
         $this->metadata[$key] = $value;

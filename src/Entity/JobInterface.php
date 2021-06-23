@@ -115,6 +115,13 @@ interface JobInterface
     public function hasMetadataEntry(string $key): bool;
 
     /**
+     * @throws \OutOfBoundsException if the key doesn't exist
+     *
+     * @return mixed
+     */
+    public function getMetadataEntry(string $key);
+
+    /**
      * Notice that this method will overwrite any data saved on $key
      *
      * @param mixed $value
