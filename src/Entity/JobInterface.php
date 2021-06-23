@@ -20,6 +20,11 @@ interface JobInterface
 
     public function getVersion(): int;
 
+    /**
+     * Returns the PID of the process that initiated this job or 0 if the PID couldn't be retrieved
+     */
+    public function getPid(): int;
+
     public function getType(): string;
 
     /**

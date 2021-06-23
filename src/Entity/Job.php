@@ -14,6 +14,8 @@ class Job implements JobInterface
 
     protected int $version = 1;
 
+    protected int $pid = 0;
+
     protected string $type = 'generic';
 
     protected string $name = 'Generic job';
@@ -43,6 +45,11 @@ class Job implements JobInterface
     public function __construct()
     {
         $this->createdAt = $this->updatedAt = new DateTime();
+
+        $pid = getmypid();
+        if (false !== $pid) {
+            $this->pid = $pid;
+        }
     }
 
     /**
@@ -58,6 +65,11 @@ class Job implements JobInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPid(): int
+    {
+        return $this->pid;
     }
 
     public function getVersion(): int
