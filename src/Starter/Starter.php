@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
 use Setono\JobStatusBundle\Entity\JobInterface;
 use Setono\JobStatusBundle\Factory\JobFactoryInterface;
+use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
 use Symfony\Component\Workflow\Registry;
 
@@ -17,15 +18,19 @@ final class Starter implements StarterInterface
 
     private Registry $workflowRegistry;
 
+    private JobRepositoryInterface $jobRepository;
+
     private JobFactoryInterface $jobFactory;
 
     public function __construct(
         Registry $workflowRegistry,
         ManagerRegistry $managerRegistry,
+        JobRepositoryInterface $jobRepository,
         JobFactoryInterface $jobFactory
     ) {
         $this->workflowRegistry = $workflowRegistry;
         $this->managerRegistry = $managerRegistry;
+        $this->jobRepository = $jobRepository;
         $this->jobFactory = $jobFactory;
     }
 
@@ -33,6 +38,10 @@ final class Starter implements StarterInterface
     {
         if (null === $job) {
             $job = $this->jobFactory->createNew();
+        }
+
+        if ($this->jobRepository->hasExclusiveRunningJob($job->getType())) {
+            throw new \RuntimeException(sprintf('An exclusive job with the type "%s" is already running', $job->getType()));
         }
 
         if (null !== $steps) {
