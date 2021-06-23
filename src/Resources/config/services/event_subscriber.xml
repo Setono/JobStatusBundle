@@ -3,21 +3,21 @@
 <container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="setono_job_status.event_listener.ensure_job_is_started_event_subscriber"
+        <service id="setono_job_status.event_subscriber.ensure_job_is_started_event_subscriber"
                  class="Setono\JobStatusBundle\EventSubscriber\EnsureJobIsStartedEventSubscriber">
             <argument type="service" id="setono_job_status.starter"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_job_status.event_listener.check_job_finished_event_subscriber"
+        <service id="setono_job_status.event_subscriber.check_job_finished_event_subscriber"
                  class="Setono\JobStatusBundle\EventSubscriber\CheckJobFinishedEventSubscriber">
             <argument type="service" id="setono_job_status.finisher"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_job_status.event_listener.update_job_progress_event_subscriber"
+        <service id="setono_job_status.event_subscriber.update_job_progress_event_subscriber"
                  class="Setono\JobStatusBundle\EventSubscriber\UpdateJobProgressEventSubscriber">
             <argument type="service" id="setono_job_status.updater.progress_updater"/>
 
@@ -25,12 +25,12 @@
         </service>
 
         <!-- Workflow event listeners -->
-        <service id="setono_job_status.event_listener.workflow.finish_job_event_subscriber"
+        <service id="setono_job_status.event_subscriber.workflow.finish_job_event_subscriber"
                  class="Setono\JobStatusBundle\EventSubscriber\Workflow\FinishJobEventSubscriber">
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_job_status.event_listener.workflow.start_job_event_subscriber"
+        <service id="setono_job_status.event_subscriber.workflow.start_job_event_subscriber"
                  class="Setono\JobStatusBundle\EventSubscriber\Workflow\StartJobEventSubscriber">
             <tag name="kernel.event_subscriber"/>
         </service>
