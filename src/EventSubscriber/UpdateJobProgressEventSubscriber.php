@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Setono\JobStatusBundle\EventListener;
+namespace Setono\JobStatusBundle\EventSubscriber;
 
 use Setono\JobStatusBundle\Event\StepCompletedEvent;
 use Setono\JobStatusBundle\Updater\ProgressUpdaterInterface;

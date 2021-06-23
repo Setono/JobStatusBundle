@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Setono\JobStatusBundle\EventListener\Workflow;
+namespace Setono\JobStatusBundle\EventSubscriber\Workflow;
 
 use Setono\JobStatusBundle\Entity\JobInterface;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
