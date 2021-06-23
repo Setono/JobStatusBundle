@@ -46,6 +46,7 @@ final class Starter implements StarterInterface
         $workflow = $this->workflowRegistry->get($job, JobWorkflow::NAME);
 
         if (!$workflow->can($job, JobWorkflow::TRANSITION_START)) {
+            // todo should this throw an exception?
             return $job;
         }
 
