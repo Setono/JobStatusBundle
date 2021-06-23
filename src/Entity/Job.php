@@ -14,7 +14,7 @@ class Job implements JobInterface
 
     protected int $version = 1;
 
-    protected int $pid = 0;
+    protected int $pid = -1;
 
     protected string $type = 'generic';
 
