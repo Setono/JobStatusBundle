@@ -27,13 +27,13 @@
         "webmozart/assert": "^1.10"
     },
     "require-dev": {
-        "infection/infection": "^0.21.0",
+        "infection/infection": "^0.23.0",
         "matthiasnoback/symfony-dependency-injection-test": "^4.2",
         "nyholm/symfony-bundle-test": "^1.7",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.5",
-        "psalm/plugin-phpunit": "^0.15.1",
-        "psalm/plugin-symfony": "^2.1",
+        "psalm/plugin-phpunit": "^0.16.1",
+        "psalm/plugin-symfony": "^2.3",
         "roave/security-advisories": "dev-latest",
         "setono/code-quality-pack": "^2.1"
     },
