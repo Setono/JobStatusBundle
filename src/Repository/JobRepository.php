@@ -12,7 +12,7 @@ use Setono\JobStatusBundle\Entity\JobInterface;
  */
 class JobRepository extends ServiceEntityRepository implements JobRepositoryInterface
 {
-    public function findRunningJobs(array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array
+    public function findRunning(array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array
     {
         return $this->findBy(['state' => JobInterface::STATE_RUNNING], $orderBy, $limit, $offset);
     }

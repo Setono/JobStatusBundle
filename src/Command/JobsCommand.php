@@ -26,7 +26,7 @@ final class JobsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $jobs = $this->jobRepository->findRunningJobs();
+        $jobs = $this->jobRepository->findRunning();
         $io = new SymfonyStyle($input, $output);
 
         $rows = [];

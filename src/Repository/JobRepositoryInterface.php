@@ -13,7 +13,7 @@ interface JobRepositoryInterface extends ObjectRepository
      * @param array<string, string> $orderBy
      * @psalm-return list<JobInterface>
      */
-    public function findRunningJobs(array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array;
+    public function findRunning(array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array;
 
     /**
      * @param array<string, string>|null $orderBy
