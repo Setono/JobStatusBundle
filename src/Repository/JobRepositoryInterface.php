@@ -28,6 +28,15 @@ interface JobRepositoryInterface extends ObjectRepository
     public function findByType(string $type, array $orderBy = null, int $limit = 1000, int $offset = null): array;
 
     /**
+     * Returns a list of Jobs that are candidates for issuing a timeout transition, i.e. jobs
+     * that has been inactive for a period longer than the 'wait for timeout' property
+     *
+     * @param array<string, string>|null $orderBy
+     * @psalm-return list<JobInterface>
+     */
+    public function findCandidatesForTimeout(array $orderBy = null, int $limit = 1000, int $offset = null): array;
+
+    /**
      * Returns true if an exclusive job of the given type is running
      */
     public function hasExclusiveRunningJob(string $type): bool;

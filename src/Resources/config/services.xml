@@ -8,9 +8,7 @@
         <import resource="services/event_listener.xml"/>
         <import resource="services/event_subscriber.xml"/>
         <import resource="services/factory.xml"/>
-        <import resource="services/finisher.xml"/>
+        <import resource="services/manager.xml"/>
         <import resource="services/repository.xml"/>
-        <import resource="services/starter.xml"/>
-        <import resource="services/updater.xml"/>
     </imports>
 </container>

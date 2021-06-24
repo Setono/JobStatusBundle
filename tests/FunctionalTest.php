@@ -16,10 +16,8 @@ use Setono\JobStatusBundle\EventSubscriber\UpdateJobProgressEventSubscriber;
 use Setono\JobStatusBundle\EventSubscriber\Workflow\FinishJobEventSubscriber;
 use Setono\JobStatusBundle\EventSubscriber\Workflow\StartJobEventSubscriber;
 use Setono\JobStatusBundle\Factory\JobFactory;
-use Setono\JobStatusBundle\Finisher\Finisher;
+use Setono\JobStatusBundle\Manager\JobManager;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
-use Setono\JobStatusBundle\Starter\Starter;
-use Setono\JobStatusBundle\Updater\ProgressUpdater;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Workflow\Registry;
@@ -51,18 +49,14 @@ final class FunctionalTest extends TestCase
         $jobRepository = $this->prophesize(JobRepositoryInterface::class);
         $jobRepository->hasExclusiveRunningJob('generic')->willReturn(false);
 
-        $finisher = new Finisher($workflowRegistry, $managerRegistry->reveal());
+        $jobManager = new JobManager($workflowRegistry, $managerRegistry->reveal(), $jobRepository->reveal(), new JobFactory(21600), new FibonacciBackOffStrategy(250_000, 5));
 
-        $starter = new Starter($workflowRegistry, $managerRegistry->reveal(), $jobRepository->reveal(), new JobFactory(21600));
-
-        $progressUpdater = new ProgressUpdater($managerRegistry->reveal(), new FibonacciBackOffStrategy(250_000, 5));
-
-        $eventDispatcher->addSubscriber(new CheckJobFinishedEventSubscriber($finisher));
+        $eventDispatcher->addSubscriber(new CheckJobFinishedEventSubscriber($jobManager));
         $eventDispatcher->addSubscriber(new StartJobEventSubscriber());
         $eventDispatcher->addSubscriber(new FinishJobEventSubscriber());
-        $eventDispatcher->addSubscriber(new UpdateJobProgressEventSubscriber($progressUpdater));
+        $eventDispatcher->addSubscriber(new UpdateJobProgressEventSubscriber($jobManager));
 
-        $starter->start($job, 10);
+        $jobManager->start($job, 10);
 
         self::assertTrue($job->isRunning(), 'Job is not running');
         self::assertNotNull($job->getCreatedAt());

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\EventSubscriber;
 
 use Setono\JobStatusBundle\Event\StepCompletedEvent;
-use Setono\JobStatusBundle\Finisher\FinisherInterface;
+use Setono\JobStatusBundle\Manager\JobManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class CheckJobFinishedEventSubscriber implements EventSubscriberInterface
 {
-    private FinisherInterface $finisher;
+    private JobManagerInterface $jobManager;
 
-    public function __construct(FinisherInterface $finisher)
+    public function __construct(JobManagerInterface $jobManager)
     {
-        $this->finisher = $finisher;
+        $this->jobManager = $jobManager;
     }
 
     public static function getSubscribedEvents(): array
@@ -39,6 +39,6 @@ final class CheckJobFinishedEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->finisher->finish($job);
+        $this->jobManager->finish($job);
     }
 }

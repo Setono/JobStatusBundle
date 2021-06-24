@@ -17,14 +17,32 @@ class JobRepository extends ServiceEntityRepository implements JobRepositoryInte
         return $this->findBy(['state' => JobInterface::STATE_RUNNING], $orderBy, $limit, $offset);
     }
 
-    public function findRunningByType(string $type, array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array
-    {
+    public function findRunningByType(
+        string $type,
+        array $orderBy = ['updatedAt' => 'DESC'],
+        int $limit = 1000,
+        int $offset = null
+    ): array {
         return $this->findBy(['type' => $type, 'state' => JobInterface::STATE_RUNNING], $orderBy, $limit, $offset);
     }
 
     public function findByType(string $type, array $orderBy = null, int $limit = 1000, int $offset = null): array
     {
         return $this->findBy(['type' => $type], $orderBy, $limit, $offset);
+    }
+
+    public function findCandidatesForTimeout(array $orderBy = null, int $limit = 1000, int $offset = null): array
+    {
+        /** @psalm-var list<JobInterface> $res */
+        $res = $this->createQueryBuilder('o')
+            ->andWhere('DATE_ADD(o.updatedAt, INTERVAL o.waitForTimeout SECOND) < :now')
+            ->andWhere('o.state = :state')
+            ->setParameter('state', JobInterface::STATE_RUNNING)
+            ->setParameter('now', new \DateTime())
+            ->getQuery()
+            ->getResult();
+
+        return $res;
     }
 
     public function hasExclusiveRunningJob(string $type): bool

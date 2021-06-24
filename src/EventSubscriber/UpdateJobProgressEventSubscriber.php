@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\EventSubscriber;
 
 use Setono\JobStatusBundle\Event\StepCompletedEvent;
-use Setono\JobStatusBundle\Updater\ProgressUpdaterInterface;
+use Setono\JobStatusBundle\Manager\JobManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class UpdateJobProgressEventSubscriber implements EventSubscriberInterface
 {
-    private ProgressUpdaterInterface $progressUpdater;
+    private JobManagerInterface $jobManager;
 
-    public function __construct(ProgressUpdaterInterface $progressUpdater)
+    public function __construct(JobManagerInterface $jobManager)
     {
-        $this->progressUpdater = $progressUpdater;
+        $this->jobManager = $jobManager;
     }
 
     public static function getSubscribedEvents(): array
@@ -26,6 +26,6 @@ final class UpdateJobProgressEventSubscriber implements EventSubscriberInterface
 
     public function update(StepCompletedEvent $event): void
     {
-        $this->progressUpdater->update($event->getJob(), $event->getSteps());
+        $this->jobManager->advance($event->getJob(), $event->getSteps());
     }
 }
