@@ -17,6 +17,11 @@ class JobRepository extends ServiceEntityRepository implements JobRepositoryInte
         return $this->findBy(['state' => JobInterface::STATE_RUNNING], $orderBy, $limit, $offset);
     }
 
+    public function findRunningByType(string $type, array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array
+    {
+        return $this->findBy(['type' => $type, 'state' => JobInterface::STATE_RUNNING], $orderBy, $limit, $offset);
+    }
+
     public function findByType(string $type, array $orderBy = null, int $limit = 1000, int $offset = null): array
     {
         return $this->findBy(['type' => $type], $orderBy, $limit, $offset);
