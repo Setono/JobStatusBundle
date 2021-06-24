@@ -14,7 +14,8 @@ class Job implements JobInterface
 
     protected int $version = 1;
 
-    protected int $pid = -1;
+    /** @var array<array-key, int> */
+    protected array $pids = [];
 
     protected string $type = 'generic';
 
@@ -47,11 +48,6 @@ class Job implements JobInterface
     public function __construct()
     {
         $this->createdAt = $this->updatedAt = new DateTime();
-
-        $pid = getmypid();
-        if (false !== $pid) {
-            $this->pid = $pid;
-        }
     }
 
     /**
@@ -69,14 +65,19 @@ class Job implements JobInterface
         return $this->id;
     }
 
-    public function getPid(): int
-    {
-        return $this->pid;
-    }
-
     public function getVersion(): int
     {
         return $this->version;
+    }
+
+    public function getPids(): array
+    {
+        return $this->pids;
+    }
+
+    public function addPid(int $pid): void
+    {
+        $this->pids[] = $pid;
     }
 
     public function getType(): string

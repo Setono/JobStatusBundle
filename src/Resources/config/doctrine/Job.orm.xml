@@ -14,7 +14,7 @@
         </id>
 
         <field name="version" type="integer" version="true"/>
-        <field name="pid" type="integer"/>
+        <field name="pids" type="array"/>
         <field name="type" type="string"/>
         <field name="name" type="string"/>
         <field name="exclusive" type="boolean"/>

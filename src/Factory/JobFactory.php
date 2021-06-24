@@ -14,6 +14,11 @@ final class JobFactory implements JobFactoryInterface
         $job = new Job();
         $job->setTimeout(new \DateTime('+24 hours'));
 
+        $pid = getmypid();
+        if (false !== $pid) {
+            $job->addPid($pid);
+        }
+
         return $job;
     }
 }

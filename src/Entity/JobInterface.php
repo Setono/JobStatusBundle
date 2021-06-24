@@ -21,9 +21,13 @@ interface JobInterface
     public function getVersion(): int;
 
     /**
-     * Returns the PID of the process that initiated this job or 0 if the PID couldn't be retrieved
+     * Returns the PIDs of the processes involved in this job
+     *
+     * @return array<array-key, int>
      */
-    public function getPid(): int;
+    public function getPids(): array;
+
+    public function addPid(int $pid): void;
 
     public function getType(): string;
 
