@@ -11,6 +11,9 @@ final class JobFactory implements JobFactoryInterface
 {
     public function createNew(): JobInterface
     {
-        return new Job();
+        $job = new Job();
+        $job->setTimeout(new \DateTime('+24 hours'));
+
+        return $job;
     }
 }

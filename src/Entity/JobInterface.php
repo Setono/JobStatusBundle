@@ -84,6 +84,14 @@ interface JobInterface
     public function setFinishedAt(?DateTimeInterface $finishedAt): void;
 
     /**
+     * The timestamp where this job is considered 'timed out' and can be killed or force finished
+     * If null, the job can run forever
+     */
+    public function getTimeout(): ?DateTimeInterface;
+
+    public function setTimeout(?DateTimeInterface $timeout): void;
+
+    /**
      * The current step, i.e. 45 out of 125, 45 is the step
      */
     public function getStep(): int;
