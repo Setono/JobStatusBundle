@@ -26,7 +26,6 @@
         <field name="startedAt" type="datetime" nullable="true"/>
         <field name="failedAt" type="datetime" nullable="true"/>
         <field name="finishedAt" type="datetime" nullable="true"/>
-        <field name="timeout" type="datetime" nullable="true"/>
         <field name="step" type="integer"/>
         <field name="steps" type="integer" nullable="true"/>
         <field name="metadata" type="array"/>
