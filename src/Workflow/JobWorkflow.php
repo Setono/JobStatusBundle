@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Workflow;
 
 use Setono\JobStatusBundle\Entity\Job;
+use Setono\JobStatusBundle\Entity\JobInterface;
 use Symfony\Component\Workflow\DefinitionBuilder;
 use Symfony\Component\Workflow\MarkingStore\MethodMarkingStore;
 use Symfony\Component\Workflow\Transition;
@@ -19,6 +20,8 @@ final class JobWorkflow
 
     public const TRANSITION_FAIL = 'fail';
 
+    public const TRANSITION_TIMEOUT = 'timeout';
+
     public const TRANSITION_FINISH = 'finish';
 
     private function __construct()
@@ -30,9 +33,7 @@ final class JobWorkflow
      */
     public static function getStates(): array
     {
-        return [
-            Job::STATE_PENDING, Job::STATE_RUNNING, Job::STATE_FAILED, Job::STATE_FINISHED,
-        ];
+        return Job::getStates();
     }
 
     public static function getConfig(): array
@@ -53,7 +54,7 @@ final class JobWorkflow
                     'property' => 'state',
                 ],
                 'supports' => Job::class,
-                'initial_marking' => Job::STATE_PENDING,
+                'initial_marking' => JobInterface::STATE_PENDING,
                 'places' => self::getStates(),
                 'transitions' => $transitions,
             ],
@@ -78,9 +79,10 @@ final class JobWorkflow
     public static function getTransitions(): array
     {
         return [
-            new Transition(self::TRANSITION_START, Job::STATE_PENDING, Job::STATE_RUNNING),
-            new Transition(self::TRANSITION_FAIL, Job::STATE_RUNNING, Job::STATE_FAILED),
-            new Transition(self::TRANSITION_FINISH, Job::STATE_RUNNING, Job::STATE_FINISHED),
+            new Transition(self::TRANSITION_START, JobInterface::STATE_PENDING, JobInterface::STATE_RUNNING),
+            new Transition(self::TRANSITION_FAIL, JobInterface::STATE_RUNNING, JobInterface::STATE_FAILED),
+            new Transition(self::TRANSITION_TIMEOUT, JobInterface::STATE_RUNNING, JobInterface::STATE_TIMED_OUT),
+            new Transition(self::TRANSITION_FINISH, JobInterface::STATE_RUNNING, JobInterface::STATE_FINISHED),
         ];
     }
 }

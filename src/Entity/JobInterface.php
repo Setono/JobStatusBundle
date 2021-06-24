@@ -14,6 +14,8 @@ interface JobInterface
 
     public const STATE_FAILED = 'failed';
 
+    public const STATE_TIMED_OUT = 'timed_out';
+
     public const STATE_FINISHED = 'finished';
 
     public function getId(): ?int;

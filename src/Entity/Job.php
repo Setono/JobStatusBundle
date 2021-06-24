@@ -56,7 +56,7 @@ class Job implements JobInterface
     public static function getStates(): array
     {
         return [
-            self::STATE_PENDING, self::STATE_RUNNING, self::STATE_FAILED, self::STATE_FINISHED,
+            self::STATE_PENDING, self::STATE_RUNNING, self::STATE_FAILED, self::STATE_TIMED_OUT, self::STATE_FINISHED,
         ];
     }
 
