@@ -25,6 +25,8 @@ class Job implements JobInterface
 
     protected string $state = self::STATE_PENDING;
 
+    protected ?int $waitForTimeout = null;
+
     protected DateTimeInterface $createdAt;
 
     protected DateTimeInterface $updatedAt;
@@ -133,6 +135,16 @@ class Job implements JobInterface
     public function isFinished(): bool
     {
         return $this->state === self::STATE_FINISHED;
+    }
+
+    public function getWaitForTimeout(): ?int
+    {
+        return $this->waitForTimeout;
+    }
+
+    public function setWaitForTimeout(?int $waitForTimeout): void
+    {
+        $this->waitForTimeout = $waitForTimeout;
     }
 
     public function getCreatedAt(): DateTimeInterface

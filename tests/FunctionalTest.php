@@ -53,7 +53,7 @@ final class FunctionalTest extends TestCase
 
         $finisher = new Finisher($workflowRegistry, $managerRegistry->reveal());
 
-        $starter = new Starter($workflowRegistry, $managerRegistry->reveal(), $jobRepository->reveal(), new JobFactory());
+        $starter = new Starter($workflowRegistry, $managerRegistry->reveal(), $jobRepository->reveal(), new JobFactory(21600));
 
         $progressUpdater = new ProgressUpdater($managerRegistry->reveal(), new FibonacciBackOffStrategy(250_000, 5));
 

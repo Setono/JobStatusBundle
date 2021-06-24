@@ -64,6 +64,14 @@ interface JobInterface
 
     public function isFinished(): bool;
 
+    /**
+     * The number of seconds a job can be running without being declared 'timed out'
+     * Null means to wait forever
+     */
+    public function getWaitForTimeout(): ?int;
+
+    public function setWaitForTimeout(int $waitForTimeout): void;
+
     public function getCreatedAt(): DateTimeInterface;
 
     public function setCreatedAt(DateTimeInterface $createdAt): void;
