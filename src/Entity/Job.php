@@ -35,8 +35,6 @@ class Job implements JobInterface
 
     protected ?DateTimeInterface $finishedAt = null;
 
-    protected ?DateTimeInterface $timeout = null;
-
     protected int $step = 0;
 
     protected ?int $steps = null;
@@ -185,16 +183,6 @@ class Job implements JobInterface
     public function setFinishedAt(?DateTimeInterface $finishedAt): void
     {
         $this->finishedAt = $finishedAt;
-    }
-
-    public function getTimeout(): ?DateTimeInterface
-    {
-        return $this->timeout;
-    }
-
-    public function setTimeout(?DateTimeInterface $timeout): void
-    {
-        $this->timeout = $timeout;
     }
 
     public function getStep(): int
