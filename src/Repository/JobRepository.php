@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait;
 use Setono\JobStatusBundle\Entity\JobInterface;
 
 /**
@@ -12,6 +13,8 @@ use Setono\JobStatusBundle\Entity\JobInterface;
  */
 class JobRepository extends ServiceEntityRepository implements JobRepositoryInterface
 {
+    use EntitySpecificationRepositoryTrait;
+
     public function findRunning(array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array
     {
         return $this->findBy(['state' => JobInterface::STATE_RUNNING], $orderBy, $limit, $offset);

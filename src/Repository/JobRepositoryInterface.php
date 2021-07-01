@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Repository;
 
 use Doctrine\Persistence\ObjectRepository;
+use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
 use Setono\JobStatusBundle\Entity\JobInterface;
 
-interface JobRepositoryInterface extends ObjectRepository
+interface JobRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
     /**
      * @param array<string, string> $orderBy
