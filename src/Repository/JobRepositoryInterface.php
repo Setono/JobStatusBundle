@@ -36,6 +36,8 @@ interface JobRepositoryInterface extends ObjectRepository
      */
     public function findCandidatesForTimeout(array $orderBy = null, int $limit = 1000, int $offset = null): array;
 
+    public function findLastJobByType(string $type): ?JobInterface;
+
     /**
      * Returns true if an exclusive job of the given type is running
      */

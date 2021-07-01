@@ -6,6 +6,7 @@ namespace Setono\JobStatusBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Setono\JobStatusBundle\Entity\JobInterface;
+use Webmozart\Assert\Assert;
 
 /**
  * @extends ServiceEntityRepository<JobInterface>
@@ -41,6 +42,21 @@ class JobRepository extends ServiceEntityRepository implements JobRepositoryInte
             ->setParameter('now', new \DateTime())
             ->getQuery()
             ->getResult();
+
+        return $res;
+    }
+
+    public function findLastJobByType(string $type): ?JobInterface
+    {
+        $res = $this->createQueryBuilder('o')
+            ->andWhere('o.type = :type')
+            ->addOrderBy('o.startedAt', 'DESC')
+            ->setParameter('type', $type)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        Assert::nullOrIsInstanceOf($res, JobInterface::class);
 
         return $res;
     }
