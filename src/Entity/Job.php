@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Entity;
 
-use DateTime;
 use DateTimeInterface;
 use Webmozart\Assert\Assert;
 
@@ -49,7 +48,9 @@ class Job implements JobInterface
 
     public function __construct()
     {
-        $this->createdAt = $this->updatedAt = new DateTime();
+        $now = new \DateTime();
+        $this->setCreatedAt($now);
+        $this->setUpdatedAt($now);
     }
 
     /**
@@ -158,13 +159,7 @@ class Job implements JobInterface
     {
         $this->updatedAt = $updatedAt;
 
-        if ($this->ttl > 0) {
-            try {
-                $this->timesOutAt = new \DateTimeImmutable(sprintf('+%d seconds', $this->ttl));
-            } catch (\Throwable $e) {
-                $this->timesOutAt = null;
-            }
-        }
+        $this->recomputeTimesOutAt();
     }
 
     public function getStartedAt(): ?DateTimeInterface
@@ -197,6 +192,19 @@ class Job implements JobInterface
         $this->finishedAt = $finishedAt;
     }
 
+    public function getEta(): ?int
+    {
+        // if we don't know the number of steps or haven't completed a single step yet, we can't compute the eta
+        if (null === $this->steps || 0 === $this->step || null === $this->startedAt) {
+            return null;
+        }
+
+        $stepsLeft = $this->steps - $this->step;
+        $secondsPerStep = (int) ceil(($this->updatedAt->getTimestamp() - $this->startedAt->getTimestamp()) / $this->step);
+
+        return ($stepsLeft * $secondsPerStep) - ((new \DateTime())->getTimestamp() - $this->updatedAt->getTimestamp());
+    }
+
     public function getTimesOutAt(): ?DateTimeInterface
     {
         return $this->timesOutAt;
@@ -207,16 +215,35 @@ class Job implements JobInterface
         $this->timesOutAt = $timesOutAt;
     }
 
+    public function recomputeTimesOutAt(): void
+    {
+        if (0 === $this->ttl) {
+            $this->timesOutAt = null;
+
+            return;
+        }
+
+        try {
+            // todo this is not completely correct, as it should use the value of updatedAt instead of 'now'
+            $this->timesOutAt = new \DateTime(sprintf('+%d seconds', $this->ttl));
+        } catch (\Throwable $e) {
+            $this->timesOutAt = null;
+        }
+    }
+
     public function getTtl(): int
     {
         return $this->ttl;
     }
 
+    // todo updated the times out at here
     public function setTtl(int $ttl): void
     {
         Assert::greaterThanEq($ttl, 0);
 
         $this->ttl = $ttl;
+
+        $this->recomputeTimesOutAt();
     }
 
     public function getStep(): int
