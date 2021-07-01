@@ -224,8 +224,12 @@ class Job implements JobInterface
         }
 
         try {
-            // todo this is not completely correct, as it should use the value of updatedAt instead of 'now'
-            $this->timesOutAt = new \DateTime(sprintf('+%d seconds', $this->ttl));
+            $updatedAt = clone $this->getUpdatedAt();
+            if (!$updatedAt instanceof \DateTime && !$updatedAt instanceof \DateTimeImmutable) {
+                throw new \InvalidArgumentException('The updatedAt value is not an instance of either DateTime or DateTimeImmutable');
+            }
+
+            $this->timesOutAt = $updatedAt->add(new \DateInterval(sprintf('PT%dS', $this->ttl)));
         } catch (\Throwable $e) {
             $this->timesOutAt = null;
         }
@@ -236,7 +240,6 @@ class Job implements JobInterface
         return $this->ttl;
     }
 
-    // todo updated the times out at here
     public function setTtl(int $ttl): void
     {
         Assert::greaterThanEq($ttl, 0);

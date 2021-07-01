@@ -33,4 +33,35 @@ final class JobTest extends TestCase
 
         self::assertSame(26400, $eta);
     }
+
+    /**
+     * @test
+     */
+    public function it_recomputes_times_out_at_when_updating_entity(): void
+    {
+        $job = new Job();
+        $job->setTtl(3600);
+        $job->setUpdatedAt(new \DateTime('-100 seconds'));
+
+        $expected = new \DateTime('+3500 seconds');
+        $timesOutAt = $job->getTimesOutAt();
+
+        self::assertNotNull($timesOutAt);
+        self::assertSame($expected->getTimestamp(), $timesOutAt->getTimestamp());
+    }
+
+    /**
+     * @test
+     */
+    public function it_recomputes_times_out_at_when_updating_ttl(): void
+    {
+        $job = new Job();
+        $job->setTtl(100);
+
+        $expected = new \DateTime('+100 seconds');
+        $timesOutAt = $job->getTimesOutAt();
+
+        self::assertNotNull($timesOutAt);
+        self::assertSame($expected->getTimestamp(), $timesOutAt->getTimestamp());
+    }
 }
