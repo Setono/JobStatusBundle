@@ -28,13 +28,12 @@ interface JobRepositoryInterface extends ObjectRepository
     public function findByType(string $type, array $orderBy = null, int $limit = 1000, int $offset = null): array;
 
     /**
-     * Returns a list of Jobs that are candidates for issuing a timeout transition, i.e. jobs
-     * that has been inactive for a period longer than the 'wait for timeout' property
+     * Returns a list of Jobs where the timesOutAt timestamp has passed and are still running
      *
      * @param array<string, string>|null $orderBy
      * @psalm-return list<JobInterface>
      */
-    public function findCandidatesForTimeout(array $orderBy = null, int $limit = 1000, int $offset = null): array;
+    public function findPassedTimeout(array $orderBy = null, int $limit = 1000, int $offset = null): array;
 
     public function findLastJobByType(string $type): ?JobInterface;
 

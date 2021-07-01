@@ -66,14 +66,6 @@ interface JobInterface
 
     public function isFinished(): bool;
 
-    /**
-     * The number of seconds a job can be running without being declared 'timed out'
-     * Null means to wait forever
-     */
-    public function getWaitForTimeout(): ?int;
-
-    public function setWaitForTimeout(int $waitForTimeout): void;
-
     public function getCreatedAt(): DateTimeInterface;
 
     public function setCreatedAt(DateTimeInterface $createdAt): void;
@@ -96,6 +88,21 @@ interface JobInterface
     public function getFinishedAt(): ?DateTimeInterface;
 
     public function setFinishedAt(?DateTimeInterface $finishedAt): void;
+
+    /**
+     * The time when this job times out and should be moved to 'timed_out' state
+     */
+    public function getTimesOutAt(): ?DateTimeInterface;
+
+    public function setTimesOutAt(?DateTimeInterface $timesOutAt): void;
+
+    /**
+     * The number of seconds a job can be running without being declared 'timed out'
+     * 0 means to wait forever
+     */
+    public function getTtl(): int;
+
+    public function setTtl(int $ttl): void;
 
     /**
      * The current step, i.e. 45 out of 125, 45 is the step

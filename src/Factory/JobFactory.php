@@ -9,17 +9,17 @@ use Setono\JobStatusBundle\Entity\JobInterface;
 
 final class JobFactory implements JobFactoryInterface
 {
-    private int $defaultWaitForTimeout;
+    private int $defaultTtl;
 
-    public function __construct(int $defaultWaitForTimeout)
+    public function __construct(int $defaultTtl)
     {
-        $this->defaultWaitForTimeout = $defaultWaitForTimeout;
+        $this->defaultTtl = $defaultTtl;
     }
 
     public function createNew(): JobInterface
     {
         $job = new Job();
-        $job->setWaitForTimeout($this->defaultWaitForTimeout);
+        $job->setTtl($this->defaultTtl);
 
         $pid = getmypid();
         if (false !== $pid) {
