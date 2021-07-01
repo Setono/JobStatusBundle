@@ -26,6 +26,10 @@ final class UpdateJobProgressEventSubscriber implements EventSubscriberInterface
 
     public function update(StepCompletedEvent $event): void
     {
+        $job = $event->getJob();
+        if (!$job->isRunning()) {
+            $this->jobManager->start($job, null, false); // we don't have to flush now because we flush right after
+        }
         $this->jobManager->advance($event->getJob(), $event->getSteps());
     }
 }
