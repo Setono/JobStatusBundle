@@ -25,8 +25,6 @@ class Job implements JobInterface
 
     protected string $state = self::STATE_PENDING;
 
-    protected ?int $waitForTimeout = null;
-
     protected DateTimeInterface $createdAt;
 
     protected DateTimeInterface $updatedAt;
@@ -36,6 +34,10 @@ class Job implements JobInterface
     protected ?DateTimeInterface $failedAt = null;
 
     protected ?DateTimeInterface $finishedAt = null;
+
+    protected ?DateTimeInterface $timesOutAt = null;
+
+    protected int $ttl = 0;
 
     protected int $step = 0;
 
@@ -137,16 +139,6 @@ class Job implements JobInterface
         return $this->state === self::STATE_FINISHED;
     }
 
-    public function getWaitForTimeout(): ?int
-    {
-        return $this->waitForTimeout;
-    }
-
-    public function setWaitForTimeout(?int $waitForTimeout): void
-    {
-        $this->waitForTimeout = $waitForTimeout;
-    }
-
     public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
@@ -165,6 +157,14 @@ class Job implements JobInterface
     public function setUpdatedAt(DateTimeInterface $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+
+        if ($this->ttl > 0) {
+            try {
+                $this->timesOutAt = new \DateTimeImmutable(sprintf('+%d seconds', $this->ttl));
+            } catch (\Throwable $e) {
+                $this->timesOutAt = null;
+            }
+        }
     }
 
     public function getStartedAt(): ?DateTimeInterface
@@ -195,6 +195,28 @@ class Job implements JobInterface
     public function setFinishedAt(?DateTimeInterface $finishedAt): void
     {
         $this->finishedAt = $finishedAt;
+    }
+
+    public function getTimesOutAt(): ?DateTimeInterface
+    {
+        return $this->timesOutAt;
+    }
+
+    public function setTimesOutAt(?DateTimeInterface $timesOutAt): void
+    {
+        $this->timesOutAt = $timesOutAt;
+    }
+
+    public function getTtl(): int
+    {
+        return $this->ttl;
+    }
+
+    public function setTtl(int $ttl): void
+    {
+        Assert::greaterThanEq($ttl, 0);
+
+        $this->ttl = $ttl;
     }
 
     public function getStep(): int

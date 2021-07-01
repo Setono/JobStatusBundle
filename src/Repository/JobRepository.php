@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait;
 use Setono\JobStatusBundle\Entity\JobInterface;
 
 /**
@@ -13,8 +12,6 @@ use Setono\JobStatusBundle\Entity\JobInterface;
  */
 class JobRepository extends ServiceEntityRepository implements JobRepositoryInterface
 {
-    use EntitySpecificationRepositoryTrait;
-
     public function findRunning(array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array
     {
         return $this->findBy(['state' => JobInterface::STATE_RUNNING], $orderBy, $limit, $offset);
@@ -34,16 +31,17 @@ class JobRepository extends ServiceEntityRepository implements JobRepositoryInte
         return $this->findBy(['type' => $type], $orderBy, $limit, $offset);
     }
 
-    public function findCandidatesForTimeout(array $orderBy = null, int $limit = 1000, int $offset = null): array
+    public function findPassedTimeout(array $orderBy = null, int $limit = 1000, int $offset = null): array
     {
         /** @psalm-var list<JobInterface> $res */
         $res = $this->createQueryBuilder('o')
-            ->andWhere('DATE_ADD(o.updatedAt, INTERVAL o.waitForTimeout SECOND) < :now')
+            ->andWhere('o.timesOutAt < :now')
             ->andWhere('o.state = :state')
-            ->setParameter('state', JobInterface::STATE_RUNNING)
             ->setParameter('now', new \DateTime())
+            ->setParameter('state', JobInterface::STATE_RUNNING)
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
 
         return $res;
     }

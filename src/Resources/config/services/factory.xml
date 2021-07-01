@@ -3,12 +3,12 @@
 <container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <!-- The default wait for a timeout is 6 hours -->
-        <parameter key="setono_job_status_default_wait_for_timeout">21600</parameter>
+        <!-- The default ttl is 6 hours -->
+        <parameter key="setono_job_status.default_ttl">21600</parameter>
     </parameters>
     <services>
         <service id="setono_job_status.factory.job" class="Setono\JobStatusBundle\Factory\JobFactory">
-            <argument>%setono_job_status_default_wait_for_timeout%</argument>
+            <argument>%setono_job_status.default_ttl%</argument>
         </service>
     </services>
 </container>
