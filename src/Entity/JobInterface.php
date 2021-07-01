@@ -90,6 +90,12 @@ interface JobInterface
     public function setFinishedAt(?DateTimeInterface $finishedAt): void;
 
     /**
+     * Returns the estimated number of seconds to finish
+     * Null means we can't compute an eta
+     */
+    public function getEta(): ?int;
+
+    /**
      * The time when this job times out and should be moved to 'timed_out' state
      */
     public function getTimesOutAt(): ?DateTimeInterface;
