@@ -5,6 +5,15 @@
     <services>
         <service id="setono_job_status.command.jobs" class="Setono\JobStatusBundle\Command\JobsCommand">
             <argument type="service" id="setono_job_status.repository.job"/>
+
+            <tag name="console.command"/>
+        </service>
+
+        <service id="setono_job_status.command.timeout" class="Setono\JobStatusBundle\Command\TimeoutCommand">
+            <argument type="service" id="setono_job_status.repository.job"/>
+            <argument type="service" id="workflow.registry"/>
+            <argument type="service" id="doctrine"/>
+
             <tag name="console.command"/>
         </service>
     </services>

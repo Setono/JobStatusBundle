@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-final class TimeoutJobsCommand extends Command
+final class TimeoutCommand extends Command
 {
     use ORMManagerTrait;
 
