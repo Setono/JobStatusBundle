@@ -7,6 +7,7 @@ namespace Setono\JobStatusBundle\Command;
 use Doctrine\Persistence\ManagerRegistry;
 use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
 use Setono\JobStatusBundle\Entity\JobInterface;
+use Setono\JobStatusBundle\Exception\TimeoutCommandException;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
 use Symfony\Component\Console\Command\Command;
@@ -46,23 +47,43 @@ final class TimeoutCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        do {
-            $jobs = $this->jobRepository->findPassedTimeout();
+        $errors = [];
 
-            $manager = null;
+        try {
+            do {
+                $jobs = $this->jobRepository->findPassedTimeout();
 
-            foreach ($jobs as $job) {
-                $workflow = $this->getWorkflow($job);
-                $workflow->apply($job, JobWorkflow::TRANSITION_TIMEOUT);
+                $manager = null;
 
-                $manager = $this->getManager($job);
-                $manager->flush();
-            }
+                foreach ($jobs as $job) {
+                    try {
+                        $workflow = $this->getWorkflow($job);
 
-            if (null !== $manager) {
-                $manager->clear();
-            }
-        } while (count($jobs) > 0);
+                        try {
+                            $workflow->apply($job, JobWorkflow::TRANSITION_TIMEOUT);
+                        } catch (\Throwable $e) {
+                            $job->setError($e->getMessage());
+                            $workflow->apply($job, JobWorkflow::TRANSITION_FAIL);
+                        }
+
+                        $manager = $this->getManager($job);
+                        $manager->flush();
+                    } catch (\Throwable $e) {
+                        $errors[] = $e->getMessage();
+                    }
+                }
+
+                if (null !== $manager) {
+                    $manager->clear();
+                }
+            } while (count($jobs) > 0);
+        } catch (\Throwable $e) {
+            $errors[] = $e->getMessage();
+        }
+
+        if (count($errors) > 0) {
+            throw TimeoutCommandException::fromErrors($errors);
+        }
 
         return 0;
     }
