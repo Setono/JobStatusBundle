@@ -15,7 +15,6 @@ final class ListCommand extends Command
 {
     protected static $defaultName = 'setono:job-status:list';
 
-    /** @var string|null */
     protected static $defaultDescription = 'Lists the currently running jobs';
 
     private JobRepositoryInterface $jobRepository;

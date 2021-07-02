@@ -4,11 +4,11 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <!-- The default ttl is 6 hours -->
-        <parameter key="setono_job_status.default_ttl">21600</parameter>
+        <parameter key="setono_job_status.job.default_ttl">21600</parameter>
     </parameters>
     <services>
         <service id="setono_job_status.factory.job" class="Setono\JobStatusBundle\Factory\JobFactory">
-            <argument>%setono_job_status.default_ttl%</argument>
+            <argument>%setono_job_status.job.default_ttl%</argument>
         </service>
     </services>
 </container>

@@ -21,7 +21,6 @@ final class TimeoutCommand extends Command
 
     protected static $defaultName = 'setono:job-status:timeout';
 
-    /** @var string|null */
     protected static $defaultDescription = "Clean up timed out jobs by moving them to the 'timed_out' state";
 
     private JobRepositoryInterface $jobRepository;
