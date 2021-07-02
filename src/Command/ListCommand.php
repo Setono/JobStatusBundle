@@ -11,9 +11,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Webmozart\Assert\Assert;
 
-final class JobsCommand extends Command
+final class ListCommand extends Command
 {
-    protected static $defaultName = 'setono:job-status:jobs';
+    protected static $defaultName = 'setono:job-status:list';
+
+    /** @var string|null */
+    protected static $defaultDescription = 'Lists the currently running jobs';
 
     private JobRepositoryInterface $jobRepository;
 
@@ -22,6 +25,11 @@ final class JobsCommand extends Command
         parent::__construct();
 
         $this->jobRepository = $jobRepository;
+    }
+
+    protected function configure(): void
+    {
+        $this->setDescription((string) self::$defaultDescription);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
