@@ -6,15 +6,11 @@ namespace Setono\JobStatusBundle\Command;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
-use Setono\JobStatusBundle\Entity\JobInterface;
-use Setono\JobStatusBundle\Exception\TimeoutCommandException;
+use Setono\JobStatusBundle\Manager\JobManagerInterface;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
-use Setono\JobStatusBundle\Workflow\JobWorkflow;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Workflow\Registry;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 final class TimeoutCommand extends Command
 {
@@ -26,17 +22,17 @@ final class TimeoutCommand extends Command
 
     private JobRepositoryInterface $jobRepository;
 
-    private Registry $workflowRegistry;
+    private JobManagerInterface $jobManager;
 
     public function __construct(
         JobRepositoryInterface $jobRepository,
-        Registry $workflowRegistry,
+        JobManagerInterface $jobManager,
         ManagerRegistry $managerRegistry
     ) {
         parent::__construct();
 
         $this->jobRepository = $jobRepository;
-        $this->workflowRegistry = $workflowRegistry;
+        $this->jobManager = $jobManager;
         $this->managerRegistry = $managerRegistry;
     }
 
@@ -47,49 +43,26 @@ final class TimeoutCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $errors = [];
+        do {
+            $jobs = $this->jobRepository->findPassedTimeout();
 
-        try {
-            do {
-                $jobs = $this->jobRepository->findPassedTimeout();
+            $manager = null;
 
-                $manager = null;
+            foreach ($jobs as $job) {
+                // notice that this call can also produce an exception, but if we catch it we might end up in an
+                // infinite loop because the state can then still be 'running' and obviously the timeout will still
+                // be passed
+                $this->jobManager->timeout($job);
 
-                foreach ($jobs as $job) {
-                    try {
-                        $workflow = $this->getWorkflow($job);
+                $manager = $this->getManager($job);
+                $manager->flush();
+            }
 
-                        try {
-                            $workflow->apply($job, JobWorkflow::TRANSITION_TIMEOUT);
-                        } catch (\Throwable $e) {
-                            $job->setError($e->getMessage());
-                            $workflow->apply($job, JobWorkflow::TRANSITION_FAIL);
-                        }
-
-                        $manager = $this->getManager($job);
-                        $manager->flush();
-                    } catch (\Throwable $e) {
-                        $errors[] = $e->getMessage();
-                    }
-                }
-
-                if (null !== $manager) {
-                    $manager->clear();
-                }
-            } while (count($jobs) > 0);
-        } catch (\Throwable $e) {
-            $errors[] = $e->getMessage();
-        }
-
-        if (count($errors) > 0) {
-            throw TimeoutCommandException::fromErrors($errors);
-        }
+            if (null !== $manager) {
+                $manager->clear();
+            }
+        } while (count($jobs) > 0);
 
         return 0;
-    }
-
-    private function getWorkflow(JobInterface $job): WorkflowInterface
-    {
-        return $this->workflowRegistry->get($job, JobWorkflow::NAME);
     }
 }

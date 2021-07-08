@@ -13,6 +13,7 @@ use Setono\JobStatusBundle\Exception\CannotStartJobException;
 use Setono\JobStatusBundle\Factory\JobFactoryInterface;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
 use Setono\JobStatusBundle\Workflow\JobWorkflow;
+use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -52,93 +53,85 @@ final class JobManager implements JobManagerInterface
             throw CannotStartJobException::exclusiveJobRunning($job->getType());
         }
 
+        $this->getManager($job)->persist($job);
+
         if (null !== $steps) {
             $job->setSteps($steps);
         }
 
-        $workflow = $this->getWorkflow($job);
+        $this->execute($job, function (JobInterface $job) {
+            $workflow = $this->getWorkflow($job);
 
-        if (!$workflow->can($job, JobWorkflow::TRANSITION_START)) {
-            throw CannotStartJobException::transitionBlocked(JobWorkflow::TRANSITION_START);
-        }
+            if (!$workflow->can($job, JobWorkflow::TRANSITION_START)) {
+                throw CannotStartJobException::transitionBlocked(JobWorkflow::TRANSITION_START);
+            }
 
-        $workflow->apply($job, JobWorkflow::TRANSITION_START);
-
-        if ($flush) {
-            $manager = $this->getManager($job);
-            $manager->persist($job);
-            $manager->flush();
-        }
+            $workflow->apply($job, JobWorkflow::TRANSITION_START);
+        }, $flush);
 
         return $job;
     }
 
     public function finish(JobInterface $job, bool $flush = true): void
     {
-        $workflow = $this->getWorkflow($job);
-
-        if (!$workflow->can($job, JobWorkflow::TRANSITION_FINISH)) {
-            // todo should throw exception?
-            return;
-        }
-
-        $workflow->apply($job, JobWorkflow::TRANSITION_FINISH);
-
-        if ($flush) {
-            $manager = $this->getManager($job);
-            $manager->flush();
-        }
+        $this->execute($job, function (JobInterface $job) {
+            $this->transition($job, JobWorkflow::TRANSITION_FINISH);
+        }, $flush);
     }
 
     public function timeout(JobInterface $job, bool $flush = true): void
     {
-        $workflow = $this->getWorkflow($job);
-
-        if (!$workflow->can($job, JobWorkflow::TRANSITION_TIMEOUT)) {
-            // todo should throw exception?
-            return;
-        }
-
-        $workflow->apply($job, JobWorkflow::TRANSITION_TIMEOUT);
-
-        if ($flush) {
-            $manager = $this->getManager($job);
-            $manager->flush();
-        }
+        $this->execute($job, function (JobInterface $job) {
+            $this->transition($job, JobWorkflow::TRANSITION_TIMEOUT);
+        }, $flush);
     }
 
-    public function advance(JobInterface $job, int $steps = 1): void
+    public function advance(JobInterface $job, int $steps = 1, bool $flush = true): void
     {
-        $tries = 0;
-
-        do {
-            // this could look like a bug, but the $job is refreshed (in the object manager)
-            // in the case self::flush returns false
+        $this->execute($job, function (JobInterface $job) use ($steps) {
             $job->advance($steps);
-        } while (!$this->tryFlush($job, ++$tries));
+        }, $flush);
+    }
+
+    private function transition(JobInterface $job, string $transition): void
+    {
+        $workflow = $this->getWorkflow($job);
+
+        try {
+            $workflow->apply($job, $transition);
+        } catch (LogicException $e) {
+            $job->setError($e->getMessage());
+            $workflow->apply($job, JobWorkflow::TRANSITION_FAIL);
+        }
     }
 
     /**
-     * Returns true if the manager flushes else it 'backs off' using
-     * the given back off strategy and then refreshes the job
+     * Will execute the callback and try to flush. If the flush throws an optimistic lock exception
+     * we will refresh the Job entity and do it all over again. This will continue as long as the
+     * back off strategy allows
      *
      * @throws OptimisticLockException
      */
-    private function tryFlush(JobInterface $job, int $tries): bool
+    private function execute(JobInterface $job, \Closure $callback, bool $flush): void
     {
+        $tries = 0;
         $manager = $this->getManager($job);
 
-        try {
-            $manager->flush();
-        } catch (OptimisticLockException $e) {
-            $this->backOffStrategy->backOff($tries, $e);
+        while (true) {
+            $callback->call($this, $job, $manager);
 
-            $manager->refresh($job);
+            try {
+                if ($flush) {
+                    $manager->flush();
+                }
 
-            return false;
+                break;
+            } catch (OptimisticLockException $e) {
+                $this->backOffStrategy->backOff(++$tries, $e);
+
+                $manager->refresh($job);
+            }
         }
-
-        return true;
     }
 
     private function getWorkflow(JobInterface $job): WorkflowInterface

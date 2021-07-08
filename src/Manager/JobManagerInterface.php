@@ -36,5 +36,5 @@ interface JobManagerInterface
     /**
      * Will advance the job by the given steps
      */
-    public function advance(JobInterface $job, int $steps = 1): void;
+    public function advance(JobInterface $job, int $steps = 1, bool $flush = true): void;
 }
