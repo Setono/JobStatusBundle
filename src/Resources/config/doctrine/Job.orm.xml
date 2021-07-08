@@ -19,7 +19,6 @@
         <field name="name" type="string"/>
         <field name="exclusive" type="boolean"/>
         <field name="state" type="string"/>
-        <field name="waitForTimeout" type="integer" nullable="true"/>
         <field name="createdAt" type="datetime"/>
         <field name="updatedAt" column="updated_at" type="datetime">
             <gedmo:timestampable on="update"/>
@@ -27,6 +26,8 @@
         <field name="startedAt" type="datetime" nullable="true"/>
         <field name="failedAt" type="datetime" nullable="true"/>
         <field name="finishedAt" type="datetime" nullable="true"/>
+        <field name="timesOutAt" type="datetime" nullable="true"/>
+        <field name="ttl" type="integer"/>
         <field name="step" type="integer"/>
         <field name="steps" type="integer" nullable="true"/>
         <field name="metadata" type="array"/>
