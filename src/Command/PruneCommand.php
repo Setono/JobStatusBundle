@@ -44,7 +44,7 @@ final class PruneCommand extends Command
             ->setDescription((string) self::$defaultDescription)
             ->addOption(
                 'hours',
-                'h',
+                null,
                 InputOption::VALUE_REQUIRED,
                 'Set the number of hours a job has to be to be pruned/removed',
                 (string) $this->defaultHours
