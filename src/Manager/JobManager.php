@@ -75,28 +75,14 @@ final class JobManager implements JobManagerInterface
     public function finish(JobInterface $job, bool $flush = true): void
     {
         $this->execute($job, function (JobInterface $job) {
-            $workflow = $this->getWorkflow($job);
-
-            try {
-                $workflow->apply($job, JobWorkflow::TRANSITION_FINISH);
-            } catch (LogicException $e) {
-                $job->setError($e->getMessage());
-                $workflow->apply($job, JobWorkflow::TRANSITION_FAIL);
-            }
+            $this->transition($job, JobWorkflow::TRANSITION_FINISH);
         }, $flush);
     }
 
     public function timeout(JobInterface $job, bool $flush = true): void
     {
         $this->execute($job, function (JobInterface $job) {
-            $workflow = $this->getWorkflow($job);
-
-            try {
-                $workflow->apply($job, JobWorkflow::TRANSITION_TIMEOUT);
-            } catch (LogicException $e) {
-                $job->setError($e->getMessage());
-                $workflow->apply($job, JobWorkflow::TRANSITION_FAIL);
-            }
+            $this->transition($job, JobWorkflow::TRANSITION_TIMEOUT);
         }, $flush);
     }
 
@@ -105,6 +91,18 @@ final class JobManager implements JobManagerInterface
         $this->execute($job, function (JobInterface $job) use ($steps) {
             $job->advance($steps);
         }, $flush);
+    }
+
+    private function transition(JobInterface $job, string $transition): void
+    {
+        $workflow = $this->getWorkflow($job);
+
+        try {
+            $workflow->apply($job, $transition);
+        } catch (LogicException $e) {
+            $job->setError($e->getMessage());
+            $workflow->apply($job, JobWorkflow::TRANSITION_FAIL);
+        }
     }
 
     /**

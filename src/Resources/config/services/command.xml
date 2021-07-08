@@ -23,7 +23,7 @@
 
         <service id="setono_job_status.command.timeout" class="Setono\JobStatusBundle\Command\TimeoutCommand">
             <argument type="service" id="setono_job_status.repository.job"/>
-            <argument type="service" id="workflow.registry"/>
+            <argument type="service" id="setono_job_status.manager.job"/>
             <argument type="service" id="doctrine"/>
 
             <tag name="console.command"/>
