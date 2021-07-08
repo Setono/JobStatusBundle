@@ -55,7 +55,6 @@ final class TimeoutCommand extends Command
                 $this->jobManager->timeout($job);
 
                 $manager = $this->getManager($job);
-                $manager->flush();
             }
 
             if (null !== $manager) {
