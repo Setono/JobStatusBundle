@@ -26,13 +26,16 @@ final class PruneCommand extends Command
 
     private int $defaultHours;
 
-    public function __construct(JobRepositoryInterface $jobRepository, ManagerRegistry $managerRegistry, int $defaultHours)
-    {
-        parent::__construct();
-
+    public function __construct(
+        JobRepositoryInterface $jobRepository,
+        ManagerRegistry $managerRegistry,
+        int $defaultHours
+    ) {
         $this->jobRepository = $jobRepository;
         $this->managerRegistry = $managerRegistry;
         $this->defaultHours = $defaultHours;
+
+        parent::__construct();
     }
 
     protected function configure(): void
