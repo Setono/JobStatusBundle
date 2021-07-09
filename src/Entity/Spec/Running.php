@@ -6,14 +6,12 @@ namespace Setono\JobStatusBundle\Entity\Spec;
 
 use Happyr\DoctrineSpecification\Spec;
 use Happyr\DoctrineSpecification\Specification\BaseSpecification;
+use Setono\JobStatusBundle\Entity\JobInterface;
 
-final class PassedTimeout extends BaseSpecification
+final class Running extends BaseSpecification
 {
     protected function getSpec()
     {
-        return Spec::andX(
-            Spec::lt('timesOutAt', new \DateTime()),
-            new Running()
-        );
+        return Spec::eq('state', JobInterface::STATE_RUNNING);
     }
 }

@@ -14,12 +14,6 @@ interface JobRepositoryInterface extends ObjectRepository, EntitySpecificationRe
      * @param array<string, string> $orderBy
      * @psalm-return list<JobInterface>
      */
-    public function findRunning(array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array;
-
-    /**
-     * @param array<string, string> $orderBy
-     * @psalm-return list<JobInterface>
-     */
     public function findRunningByType(string $type, array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array;
 
     /**

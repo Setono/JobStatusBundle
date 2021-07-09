@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Command;
 
+use Setono\JobStatusBundle\Entity\JobInterface;
+use Setono\JobStatusBundle\Entity\Spec\Running;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,7 +35,8 @@ final class ListCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $jobs = $this->jobRepository->findRunning();
+        /** @var array<array-key, JobInterface> $jobs */
+        $jobs = $this->jobRepository->match(new Running());
         $io = new SymfonyStyle($input, $output);
 
         $rows = [];
