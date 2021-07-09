@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Repository;
 
 use Doctrine\Persistence\ObjectRepository;
+use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryInterface;
 use Setono\JobStatusBundle\Entity\JobInterface;
 
-interface JobRepositoryInterface extends ObjectRepository
+interface JobRepositoryInterface extends ObjectRepository, EntitySpecificationRepositoryInterface
 {
     /**
      * @param array<string, string> $orderBy
@@ -26,14 +27,6 @@ interface JobRepositoryInterface extends ObjectRepository
      * @psalm-return list<JobInterface>
      */
     public function findByType(string $type, array $orderBy = null, int $limit = 1000, int $offset = null): array;
-
-    /**
-     * Returns a list of Jobs where the timesOutAt timestamp has passed and are still running
-     *
-     * @param array<string, string>|null $orderBy
-     * @psalm-return list<JobInterface>
-     */
-    public function findPassedTimeout(array $orderBy = null, int $limit = 1000, int $offset = null): array;
 
     /**
      * Returns the last job that was started by the given type

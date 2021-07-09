@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Command;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
+use Setono\JobStatusBundle\Entity\JobInterface;
+use Setono\JobStatusBundle\Entity\Spec\PassedTimeout;
 use Setono\JobStatusBundle\Manager\JobManagerInterface;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class TimeoutCommand extends Command
 {
-    use ORMManagerTrait;
-
     protected static $defaultName = 'setono:job-status:timeout';
 
     protected static $defaultDescription = "Clean up timed out jobs by moving them to the 'timed_out' state";
@@ -26,14 +25,12 @@ final class TimeoutCommand extends Command
 
     public function __construct(
         JobRepositoryInterface $jobRepository,
-        JobManagerInterface $jobManager,
-        ManagerRegistry $managerRegistry
+        JobManagerInterface $jobManager
     ) {
         parent::__construct();
 
         $this->jobRepository = $jobRepository;
         $this->jobManager = $jobManager;
-        $this->managerRegistry = $managerRegistry;
     }
 
     protected function configure(): void
@@ -43,24 +40,17 @@ final class TimeoutCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        do {
-            $jobs = $this->jobRepository->findPassedTimeout();
+        $io = new SymfonyStyle($input, $output);
+        $i = 0;
 
-            $manager = null;
+        /** @var JobInterface $job */
+        foreach ($this->jobRepository->iterate(new PassedTimeout()) as $job) {
+            $this->jobManager->timeout($job);
 
-            foreach ($jobs as $job) {
-                // notice that this call can also produce an exception, but if we catch it we might end up in an
-                // infinite loop because the state can then still be 'running' and obviously the timeout will still
-                // be passed
-                $this->jobManager->timeout($job);
+            $i++;
+        }
 
-                $manager = $this->getManager($job);
-            }
-
-            if (null !== $manager) {
-                $manager->clear();
-            }
-        } while (count($jobs) > 0);
+        $io->success(sprintf("%d job%s was transitioned to the 'timed_out' state", $i, $i === 1 ? '' : 's'));
 
         return 0;
     }
