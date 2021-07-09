@@ -6,6 +6,7 @@ namespace Setono\JobStatusBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Happyr\DoctrineSpecification\Repository\EntitySpecificationRepositoryTrait;
 use Setono\JobStatusBundle\Entity\JobInterface;
 use Webmozart\Assert\Assert;
 
@@ -14,6 +15,8 @@ use Webmozart\Assert\Assert;
  */
 class JobRepository extends ServiceEntityRepository implements JobRepositoryInterface
 {
+    use EntitySpecificationRepositoryTrait;
+
     public function findRunning(array $orderBy = ['updatedAt' => 'DESC'], int $limit = 1000, int $offset = null): array
     {
         return $this->findBy(['state' => JobInterface::STATE_RUNNING], $orderBy, $limit, $offset);
@@ -31,24 +34,6 @@ class JobRepository extends ServiceEntityRepository implements JobRepositoryInte
     public function findByType(string $type, array $orderBy = null, int $limit = 1000, int $offset = null): array
     {
         return $this->findBy(['type' => $type], $orderBy, $limit, $offset);
-    }
-
-    public function findPassedTimeout(array $orderBy = null, int $limit = 1000, int $offset = null): array
-    {
-        $qb = $this->createQueryBuilder('o')
-            ->andWhere('o.timesOutAt < :now')
-            ->andWhere('o.state = :state')
-            ->setParameter('now', new \DateTime())
-            ->setParameter('state', JobInterface::STATE_RUNNING)
-        ;
-
-        self::applyOrderBy($qb, $orderBy);
-        self::applyPagination($qb, $limit, $offset);
-
-        /** @psalm-var list<JobInterface> $res */
-        $res = $qb->getQuery()->getResult();
-
-        return $res;
     }
 
     public function findLastJobByType(string $type): ?JobInterface
