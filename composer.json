@@ -30,6 +30,7 @@
         "webmozart/assert": "^1.10"
     },
     "require-dev": {
+        "doctrine/data-fixtures": "^1.5",
         "infection/infection": "^0.23.0",
         "matthiasnoback/symfony-dependency-injection-test": "^4.2",
         "phpspec/prophecy-phpunit": "^2.0",

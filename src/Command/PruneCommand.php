@@ -6,6 +6,8 @@ namespace Setono\JobStatusBundle\Command;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
+use Setono\JobStatusBundle\Entity\JobInterface;
+use Setono\JobStatusBundle\Entity\Spec\Prunable;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -64,7 +66,8 @@ final class PruneCommand extends Command
         $threshold = new \DateTimeImmutable(sprintf('-%d hours', $hours));
         $io->text(sprintf('Removes jobs not updated since %s', $threshold->format('Y-m-d H:i')));
 
-        $jobs = $this->jobRepository->findNotUpdatedSince($threshold);
+        /** @var array<array-key, JobInterface> $jobs */
+        $jobs = $this->jobRepository->match(new Prunable($threshold));
 
         $manager = null;
         $jobsRemoved = 0;
