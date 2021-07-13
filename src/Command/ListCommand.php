@@ -37,7 +37,10 @@ final class ListCommand extends Command
     {
         /** @var array<array-key, JobInterface> $jobs */
         $jobs = $this->jobRepository->match(new Running());
+        $jobCount = count($jobs);
         $io = new SymfonyStyle($input, $output);
+
+        $io->section(sprintf('%d running job%s', $jobCount, $jobCount === 1 ? '' : 's'));
 
         $rows = [];
         foreach ($jobs as $job) {

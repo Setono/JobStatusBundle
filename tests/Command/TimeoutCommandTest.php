@@ -34,7 +34,6 @@ final class TimeoutCommandTest extends TestCase
         $commandTester = new CommandTester(new TimeoutCommand($jobRepository->reveal(), $jobManager->reveal()));
         $commandTester->execute([]);
 
-        // the output of the command in the console
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString("1 job was transitioned to the 'timed_out' state", $output);
     }
