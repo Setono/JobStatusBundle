@@ -53,6 +53,11 @@ class Job implements JobInterface
         $this->setUpdatedAt($now);
     }
 
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
+
     /**
      * @return array<array-key, string>
      */

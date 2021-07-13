@@ -1,0 +1,8 @@
+--TEST--
+"sjs_last_job_by_type" function
+--TEMPLATE--
+{{ sjs_last_job_by_type('generic') }}
+--DATA--
+return []
+--EXPECT--
+Generic job

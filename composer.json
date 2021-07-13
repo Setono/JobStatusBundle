@@ -27,6 +27,7 @@
         "symfony/http-kernel": "^4.4 || ^5.1.5",
         "symfony/validator": "^4.4 || ^5.0",
         "symfony/workflow": "^4.4 || ^5.0",
+        "twig/twig": "^2.14 || ^3.3",
         "webmozart/assert": "^1.10"
     },
     "require-dev": {
@@ -38,7 +39,10 @@
         "psalm/plugin-phpunit": "^0.16.1",
         "psalm/plugin-symfony": "^2.3",
         "roave/security-advisories": "dev-latest",
-        "setono/code-quality-pack": "^2.1"
+        "setono/code-quality-pack": "^2.1",
+        "symfony/css-selector": "^5.3",
+        "symfony/dom-crawler": "^5.3",
+        "symfony/twig-bundle": "^5.3"
     },
     "config": {
         "sort-packages": true

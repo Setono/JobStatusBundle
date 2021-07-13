@@ -18,6 +18,8 @@ interface JobInterface
 
     public const STATE_FINISHED = 'finished';
 
+    public function __toString(): string;
+
     public function getId(): ?int;
 
     public function getVersion(): int;

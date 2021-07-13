@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="setono_job_status.twig.extension"
+                 class="Setono\JobStatusBundle\Twig\Extension">
+
+            <tag name="twig.extension"/>
+        </service>
+
+        <service id="setono_job_status.twig.runtime"
+                 class="Setono\JobStatusBundle\Twig\Runtime">
+            <argument type="service" id="setono_job_status.repository.job"/>
+
+            <tag name="twig.runtime"/>
+        </service>
+    </services>
+</container>
