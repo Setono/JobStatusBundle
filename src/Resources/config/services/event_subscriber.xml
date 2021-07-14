@@ -17,7 +17,7 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <!-- Workflow event listeners -->
+        <!-- Workflow event subscribers -->
         <service id="setono_job_status.event_subscriber.workflow.finish_job_event_subscriber"
                  class="Setono\JobStatusBundle\EventSubscriber\Workflow\FinishJobEventSubscriber">
             <tag name="kernel.event_subscriber"/>

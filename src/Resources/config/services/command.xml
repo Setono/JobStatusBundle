@@ -7,7 +7,7 @@
         <parameter key="setono_job_status.job.default_prune_threshold">720</parameter>
     </parameters>
     <services>
-        <service id="setono_job_status.command.jobs" class="Setono\JobStatusBundle\Command\ListCommand">
+        <service id="setono_job_status.command.list" class="Setono\JobStatusBundle\Command\ListCommand">
             <argument type="service" id="setono_job_status.repository.job"/>
 
             <tag name="console.command"/>
