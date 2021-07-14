@@ -7,8 +7,7 @@ namespace Setono\JobStatusBundle\Tests;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use EventSauce\BackOff\BackOffStrategy;
 use EventSauce\BackOff\FibonacciBackOffStrategy;
-use Nyholm\BundleTest\BaseBundleTestCase;
-use Nyholm\BundleTest\CompilerPass\PublicServicePass;
+use PHPUnit\Framework\TestCase;
 use Setono\JobStatusBundle\Command\ListCommand;
 use Setono\JobStatusBundle\Command\PruneCommand;
 use Setono\JobStatusBundle\Command\TimeoutCommand;
@@ -30,6 +29,7 @@ use Setono\JobStatusBundle\Twig\Runtime;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -39,7 +39,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 /**
  * @covers \Setono\JobStatusBundle\SetonoJobStatusBundle
  */
-final class SetonoJobStatusBundleTest extends BaseBundleTestCase
+final class SetonoJobStatusBundleTest extends TestCase
 {
     protected function getBundleClass(): string
     {
@@ -148,7 +148,22 @@ class TestKernel extends Kernel
 {
     protected function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new PublicServicePass());
+        // this compiler pass will make all services public
+        // which makes it possible to get a service using $container->get()
+        $compilerPass = new class() implements CompilerPassInterface {
+            public function process(ContainerBuilder $container): void
+            {
+                foreach ($container->getDefinitions() as $definition) {
+                    $definition->setPublic(true);
+                }
+
+                foreach ($container->getAliases() as $alias) {
+                    $alias->setPublic(true);
+                }
+            }
+        };
+
+        $container->addCompilerPass($compilerPass);
     }
 
     public function registerBundles(): iterable
