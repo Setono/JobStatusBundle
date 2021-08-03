@@ -40,7 +40,7 @@ final class JobWorkflow
     {
         $transitions = [];
         foreach (self::getTransitions() as $transition) {
-            $transitions[(string) $transition->getName()] = [
+            $transitions[$transition->getName()] = [
                 'from' => $transition->getFroms(),
                 'to' => $transition->getTos(),
             ];
