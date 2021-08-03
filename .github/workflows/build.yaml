@@ -75,7 +75,7 @@ jobs:
                     coverage: "none"
                     extensions: "${{ env.PHP_EXTENSIONS }}"
                     php-version: "${{ matrix.php-version }}"
-                    tools: "composer-require-checker:3.1.0, composer-unused" # todo using 3.1.0 until this issue is fixed: https://github.com/maglnet/ComposerRequireChecker/issues/281
+                    tools: "composer-require-checker:3.1.0, composer-unused, flex" # todo using 3.1.0 until this issue is fixed: https://github.com/maglnet/ComposerRequireChecker/issues/281
 
             -   name: "Install composer dependencies"
                 uses: "ramsey/composer-install@v1"
