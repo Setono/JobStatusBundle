@@ -6,7 +6,7 @@ namespace Setono\JobStatusBundle\EventListener\Doctrine;
 
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Setono\JobStatusBundle\Entity\JobInterface;
-use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class ValidateJobEventListener
@@ -35,9 +35,10 @@ final class ValidateJobEventListener
             return;
         }
 
+        /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($job);
         if ($errors->count() > 0) {
-            throw new ValidationFailedException($job, $errors);
+            throw new \RuntimeException(sprintf('Job "%s" with id %d failed validation. Errors: %s', $job->getName(), (int) $job->getId(), (string) $errors));
         }
     }
 }
