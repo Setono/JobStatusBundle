@@ -38,7 +38,12 @@ final class ValidateJobEventListener
         /** @var ConstraintViolationList $errors */
         $errors = $this->validator->validate($job);
         if ($errors->count() > 0) {
-            throw new \RuntimeException(sprintf('Job "%s" with id %d failed validation. Errors: %s', $job->getName(), (int) $job->getId(), (string) $errors));
+            throw new \RuntimeException(sprintf(
+                'Job "%s" with id %d failed validation. Errors: %s',
+                $job->getName(),
+                (int) $job->getId(),
+                (string) $errors
+            ));
         }
     }
 }
