@@ -40,10 +40,10 @@
         "psalm/plugin-symfony": "^2.3",
         "roave/security-advisories": "dev-latest",
         "setono/code-quality-pack": "^2.1",
-        "symfony/css-selector": "^5.3",
-        "symfony/dom-crawler": "^5.3",
+        "symfony/css-selector": "^4.4 || ^5.3",
+        "symfony/dom-crawler": "^4.4 || ^5.3",
         "symfony/serializer-pack": "^1.0",
-        "symfony/twig-bundle": "^5.3"
+        "symfony/twig-bundle": "^4.4 || ^5.3"
     },
     "config": {
         "sort-packages": true
