@@ -16,6 +16,7 @@ use Setono\JobStatusBundle\Workflow\JobWorkflow;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Webmozart\Assert\Assert;
 
 final class JobManager implements JobManagerInterface
 {
@@ -86,8 +87,13 @@ final class JobManager implements JobManagerInterface
         }, $flush);
     }
 
-    public function advance(JobInterface $job, int $steps = 1, bool $flush = true): void
+    public function advance($job, int $steps = 1, bool $flush = true): void
     {
+        if (is_int($job)) {
+            $job = $this->getJob($job);
+        }
+        Assert::isInstanceOf($job, JobInterface::class);
+
         $this->execute($job, function (JobInterface $job) use ($steps) {
             $job->advance($steps);
         }, $flush);
@@ -132,6 +138,17 @@ final class JobManager implements JobManagerInterface
                 $manager->refresh($job);
             }
         }
+    }
+
+    private function getJob(int $jobId): JobInterface
+    {
+        /** @var JobInterface|null $job */
+        $job = $this->jobRepository->find($jobId);
+        if (null === $job) {
+            throw new \InvalidArgumentException(sprintf('No job exists with id %d', $jobId));
+        }
+
+        return $job;
     }
 
     private function getWorkflow(JobInterface $job): WorkflowInterface

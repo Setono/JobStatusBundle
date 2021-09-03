@@ -35,6 +35,8 @@ interface JobManagerInterface
 
     /**
      * Will advance the job by the given steps
+     *
+     * @param int|JobInterface|mixed $job
      */
-    public function advance(JobInterface $job, int $steps = 1, bool $flush = true): void;
+    public function advance($job, int $steps = 1, bool $flush = true): void;
 }
