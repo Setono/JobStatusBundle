@@ -32,7 +32,7 @@
     },
     "require-dev": {
         "doctrine/data-fixtures": "^1.5",
-        "infection/infection": "^0.24.0",
+        "infection/infection": "^0.24.0 || ^0.26.0",
         "matthiasnoback/symfony-dependency-injection-test": "^4.2",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.5",
