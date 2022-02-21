@@ -47,7 +47,7 @@ final class TimeoutCommand extends Command
         foreach ($this->jobRepository->iterate(new PassedTimeout()) as $job) {
             $this->jobManager->timeout($job);
 
-            $i++;
+            ++$i;
         }
 
         $io->success(sprintf("%d job%s was transitioned to the 'timed_out' state", $i, $i === 1 ? '' : 's'));

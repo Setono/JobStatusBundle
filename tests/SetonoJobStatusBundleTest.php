@@ -178,7 +178,7 @@ class TestKernel extends Kernel
                 ->loadFromExtension('framework', [
                     'annotations' => [
                         'cache' => 'file',
-                        'file_cache_dir' => '%kernel.cache_dir%/annotations'
+                        'file_cache_dir' => '%kernel.cache_dir%/annotations',
                     ],
                     'secret' => '$ecret',
                     'serializer' => [
@@ -186,12 +186,12 @@ class TestKernel extends Kernel
                     ],
                     'router' => [
                         'utf8' => true,
-                        'resource' => 'kernel::loadRoutes'
-                    ]
+                        'resource' => 'kernel::loadRoutes',
+                    ],
                 ])
                 ->loadFromExtension('doctrine', [
                     'dbal' => [
-                        'url' => 'sqlite:///%kernel.project_dir%/var/data.db'
+                        'url' => 'sqlite:///%kernel.project_dir%/var/data.db',
                     ],
                     'orm' => [
                         'auto_generate_proxy_classes' => true,
@@ -202,10 +202,10 @@ class TestKernel extends Kernel
                                 'is_bundle' => false,
                                 'type' => 'xml',
                                 'dir' => __DIR__ . '/../src/Resources/config/doctrine',
-                                'prefix' => 'Setono\JobStatusBundle\Entity'
-                            ]
-                        ]
-                    ]
+                                'prefix' => 'Setono\JobStatusBundle\Entity',
+                            ],
+                        ],
+                    ],
                 ])
             ;
         });

@@ -122,7 +122,7 @@ final class JobManagerTest extends TestCase
 
                 public function execute(array $args, ObjectProphecy $object, MethodProphecy $method)
                 {
-                    $this->timesThrown++;
+                    ++$this->timesThrown;
 
                     if ($this->timesThrown >= $this->timesToThrow) {
                         $object->flush()->willReturn(null);

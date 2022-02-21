@@ -72,7 +72,7 @@ final class PruneCommand extends Command
         $manager = null;
         $jobsRemoved = 0;
         foreach ($jobs as $job) {
-            $jobsRemoved++;
+            ++$jobsRemoved;
 
             $manager = $this->getManager($job);
             $manager->remove($job);
