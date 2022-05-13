@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Command;
 
-use Setono\JobStatusBundle\Entity\JobInterface;
+use Happyr\DoctrineSpecification\Spec;
 use Setono\JobStatusBundle\Entity\Spec\PassedTimeout;
 use Setono\JobStatusBundle\Manager\JobManagerInterface;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
@@ -43,8 +43,12 @@ final class TimeoutCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $i = 0;
 
-        /** @var JobInterface $job */
-        foreach ($this->jobRepository->iterate(new PassedTimeout()) as $job) {
+        $jobs = $this->jobRepository->match(Spec::andX(
+            new PassedTimeout(),
+            Spec::limit(100)
+        ));
+
+        foreach ($jobs as $job) {
             $this->jobManager->timeout($job);
 
             ++$i;

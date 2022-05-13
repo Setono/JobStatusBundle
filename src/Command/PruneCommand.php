@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Command;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Happyr\DoctrineSpecification\Spec;
 use Setono\DoctrineObjectManagerTrait\ORM\ORMManagerTrait;
 use Setono\JobStatusBundle\Entity\JobInterface;
 use Setono\JobStatusBundle\Entity\Spec\Prunable;
@@ -67,7 +68,10 @@ final class PruneCommand extends Command
         $io->text(sprintf('Removes jobs not updated since %s', $threshold->format('Y-m-d H:i')));
 
         /** @var array<array-key, JobInterface> $jobs */
-        $jobs = $this->jobRepository->match(new Prunable($threshold));
+        $jobs = $this->jobRepository->match(Spec::andX(
+            new Prunable($threshold),
+            Spec::limit(100)
+        ));
 
         $manager = null;
         $jobsRemoved = 0;
