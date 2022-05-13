@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Setono\JobStatusBundle\Tests\Command;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Setono\JobStatusBundle\Command\TimeoutCommand;
 use Setono\JobStatusBundle\Entity\Job;
-use Setono\JobStatusBundle\Entity\Spec\PassedTimeout;
 use Setono\JobStatusBundle\Manager\JobManagerInterface;
 use Setono\JobStatusBundle\Repository\JobRepositoryInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -28,7 +28,7 @@ final class TimeoutCommandTest extends TestCase
         $job = new Job();
 
         $jobRepository = $this->prophesize(JobRepositoryInterface::class);
-        $jobRepository->iterate(new PassedTimeout())->willYield([$job]);
+        $jobRepository->match(Argument::any())->willReturn([$job]);
         $jobManager = $this->prophesize(JobManagerInterface::class);
 
         $commandTester = new CommandTester(new TimeoutCommand($jobRepository->reveal(), $jobManager->reveal()));
