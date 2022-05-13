@@ -10,8 +10,8 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\Driver\SymfonyFileLocator;
 use PHPUnit\Framework\TestCase;
@@ -40,7 +40,7 @@ final class LastJobWithTypeTest extends TestCase
             $fileLocator = new SymfonyFileLocator([
                 __DIR__ . '/../../../src/Resources/config/doctrine' => 'Setono\JobStatusBundle\Entity',
             ], '.orm.xml');
-            $config = Setup::createXMLMetadataConfiguration([], true);
+            $config = ORMSetup::createXMLMetadataConfiguration([], true);
             $config->setMetadataDriverImpl(new XmlDriver($fileLocator));
 
             $this->entityManager = EntityManager::create([
