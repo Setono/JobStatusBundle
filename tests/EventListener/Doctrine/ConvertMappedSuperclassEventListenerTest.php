@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Setono\JobStatusBundle\Tests\EventListener\Doctrine;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\Persistence\ObjectManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Setono\JobStatusBundle\Entity\Job;
@@ -27,7 +27,7 @@ final class ConvertMappedSuperclassEventListenerTest extends TestCase
         $classMetadata = new ClassMetadata(Job::class);
         $classMetadata->isMappedSuperclass = true;
 
-        $objectManager = $this->prophesize(ObjectManager::class);
+        $objectManager = $this->prophesize(EntityManagerInterface::class);
         $eventArgs = new LoadClassMetadataEventArgs($classMetadata, $objectManager->reveal());
         $listener = new ConvertMappedSuperclassEventListener();
         $listener->loadClassMetadata($eventArgs);
