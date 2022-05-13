@@ -40,6 +40,8 @@ final class LastJobWithTypeTest extends TestCase
             $fileLocator = new SymfonyFileLocator([
                 __DIR__ . '/../../../src/Resources/config/doctrine' => 'Setono\JobStatusBundle\Entity',
             ], '.orm.xml');
+
+            /** @psalm-suppress DeprecatedClass */
             $config = Setup::createXMLMetadataConfiguration([], true);
             $config->setMetadataDriverImpl(new XmlDriver($fileLocator));
 
