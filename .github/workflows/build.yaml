@@ -24,7 +24,7 @@ jobs:
                 
         steps:
             -   name: "Checkout"
-                uses: "actions/checkout@v2"
+                uses: "actions/checkout@v3"
 
             -   name: "Setup PHP, with composer and extensions"
                 uses: "shivammathur/setup-php@v2"
@@ -34,7 +34,7 @@ jobs:
                     coverage: "none"
 
             -   name: "Install composer dependencies"
-                uses: "ramsey/composer-install@v1"
+                uses: "ramsey/composer-install@v2"
                 with:
                     dependency-versions: "${{ matrix.dependencies }}"
 
@@ -68,7 +68,7 @@ jobs:
         
         steps:
             -   name: "Checkout"
-                uses: "actions/checkout@v2"
+                uses: "actions/checkout@v3"
 
             -   name: "Setup PHP, with composer and extensions"
                 uses: "shivammathur/setup-php@v2"
@@ -79,7 +79,7 @@ jobs:
                     tools: "composer-require-checker:3.1.0, composer-unused, flex" # todo using 3.1.0 until this issue is fixed: https://github.com/maglnet/ComposerRequireChecker/issues/281
 
             -   name: "Install composer dependencies"
-                uses: "ramsey/composer-install@v1"
+                uses: "ramsey/composer-install@v2"
                 env:
                     SYMFONY_REQUIRE: "${{ matrix.symfony }}"
                 with:
@@ -108,7 +108,7 @@ jobs:
 
         steps:
             -   name: "Checkout"
-                uses: "actions/checkout@v2"
+                uses: "actions/checkout@v3"
 
             -   name: "Setup PHP, with composer and extensions"
                 uses: "shivammathur/setup-php@v2"
@@ -118,7 +118,7 @@ jobs:
                     coverage: "none"
 
             -   name: "Install composer dependencies"
-                uses: "ramsey/composer-install@v1"
+                uses: "ramsey/composer-install@v2"
                 with:
                     dependency-versions: "${{ matrix.dependencies }}"
 
@@ -147,7 +147,7 @@ jobs:
 
         steps:
             -   name: "Checkout"
-                uses: "actions/checkout@v2"
+                uses: "actions/checkout@v3"
 
             -   name: "Setup PHP, with composer and extensions"
                 uses: "shivammathur/setup-php@v2"
@@ -157,7 +157,7 @@ jobs:
                     coverage: "none"
 
             -   name: "Install composer dependencies"
-                uses: "ramsey/composer-install@v1"
+                uses: "ramsey/composer-install@v2"
                 with:
                     dependency-versions: "${{ matrix.dependencies }}"
 
@@ -179,7 +179,7 @@ jobs:
 
         steps:
             -   name: "Checkout"
-                uses: "actions/checkout@v2"
+                uses: "actions/checkout@v3"
 
             -   name: "Setup PHP, with composer and extensions"
                 uses: "shivammathur/setup-php@v2"
@@ -192,7 +192,7 @@ jobs:
                 run: "echo \"::add-matcher::${{ runner.tool_cache }}/phpunit.json\""
 
             -   name: "Install composer dependencies"
-                uses: "ramsey/composer-install@v1"
+                uses: "ramsey/composer-install@v2"
                 with:
                     dependency-versions: "${{ matrix.dependencies }}"
 
@@ -219,7 +219,7 @@ jobs:
 
         steps:
             -   name: "Checkout"
-                uses: "actions/checkout@v2"
+                uses: "actions/checkout@v3"
 
             -   name: "Setup PHP, with composer and extensions"
                 uses: "shivammathur/setup-php@v2"
@@ -229,7 +229,7 @@ jobs:
                     php-version: "${{ matrix.php-version }}"
 
             -   name: "Install composer dependencies"
-                uses: "ramsey/composer-install@v1"
+                uses: "ramsey/composer-install@v2"
                 with:
                     dependency-versions: "${{ matrix.dependencies }}"
 
