@@ -67,7 +67,7 @@ final class PruneCommand extends Command
         $threshold = new \DateTimeImmutable(sprintf('-%d hours', $hours));
         $io->text(sprintf('Removes jobs not updated since %s', $threshold->format('Y-m-d H:i')));
 
-        /** @var array<array-key, JobInterface> $jobs */
+        /** @var list<JobInterface> $jobs */
         $jobs = $this->jobRepository->match(Spec::andX(
             new Prunable($threshold),
             Spec::limit(100)
